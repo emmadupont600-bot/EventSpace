@@ -10,13 +10,571 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
   <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,600;12..96,700;12..96,800&display=swap" rel="stylesheet" />
   <style>
-    :root {
-      --font-display: 'Bricolage Grotesque', 'Inter', sans-serif;
-      --font-body: 'Inter', sans-serif;
+    :root { --font-display: 'Bricolage Grotesque','Inter',sans-serif; --font-body: 'Inter',sans-serif; }
+
+    /* HERO */
+    .hero-section { background:#fafafa; padding:96px 1.5rem 100px; max-width:1200px; margin:0 auto; display:grid; grid-template-columns:1fr 1fr; gap:56px; align-items:center; }
+    .hero-eyebrow { display:inline-flex; align-items:center; gap:8px; padding:5px 14px; background:var(--light); border:1px solid rgba(45,91,227,.18); border-radius:100px; font-size:.78rem; font-weight:600; color:var(--primary); letter-spacing:.04em; margin-bottom:20px; }
+    .hero-eyebrow-dot { width:6px; height:6px; background:var(--primary); border-radius:50%; animation:pulseDot 2s ease infinite; }
+    .hero-title { font-family:var(--font-display); font-size:clamp(2.2rem,4.5vw,3.6rem); font-weight:800; line-height:1.1; color:var(--dark); margin-bottom:18px; letter-spacing:-.03em; }
+    .hero-title em { font-style:normal; color:var(--primary); }
+    .hero-subtitle { font-size:1.05rem; color:var(--mid); max-width:460px; line-height:1.75; margin-bottom:32px; }
+    .hero-search-card { background:#fff; border:1.5px solid var(--border); border-radius:var(--radius); padding:20px; box-shadow:var(--shadow); margin-bottom:32px; }
+    .hero-search-label { font-size:.76rem; font-weight:600; text-transform:uppercase; letter-spacing:.07em; color:var(--mid); margin-bottom:12px; display:flex; align-items:center; gap:6px; }
+    .hero-search-row { display:flex; gap:8px; flex-wrap:wrap; }
+    .hero-search-row input,.hero-search-row select { flex:1; min-width:130px; padding:11px 14px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:#fafafa; color:var(--dark); font-family:var(--font-body); font-size:.9rem; outline:none; transition:border-color .2s; }
+    .hero-search-row input:focus,.hero-search-row select:focus { border-color:var(--primary); background:#fff; }
+    .hero-tags { display:flex; flex-wrap:wrap; gap:7px; margin-top:12px; }
+    .hero-tag { padding:4px 12px; border-radius:100px; border:1px solid var(--border); background:transparent; font-size:.76rem; font-family:var(--font-body); color:var(--mid); cursor:pointer; transition:all .18s; }
+    .hero-tag:hover { border-color:var(--primary); color:var(--primary); background:var(--light); }
+    .hero-mini-stats { display:flex; gap:28px; }
+    .hero-mini-stat strong { display:block; font-family:var(--font-display); font-size:1.55rem; font-weight:700; color:var(--dark); line-height:1; }
+    .hero-mini-stat span { font-size:.76rem; color:var(--mid); }
+
+    /* HERO VISUAL */
+    .hero-visual { position:relative; display:flex; align-items:center; justify-content:center; padding:18px 24px 36px; }
+    .hero-visual-inner { position:relative; width:100%; max-width:460px; }
+    .hero-img-wrap { border-radius:var(--radius); overflow:hidden; box-shadow:var(--shadow-lg); animation:floatUp .9s .2s ease both; }
+    .hero-img-wrap img { width:100%; height:300px; object-fit:cover; display:block; }
+    .hero-mini-cards { display:grid; grid-template-columns:1fr 1fr; gap:10px; margin-top:10px; animation:floatUp .9s .45s ease both; }
+    .hero-mini-card { background:#fff; border:1.5px solid var(--border); border-radius:10px; overflow:hidden; box-shadow:var(--shadow); position:relative; transition:transform .2s; cursor:pointer; }
+    .hero-mini-card:hover { transform:translateY(-2px); }
+    .hero-mini-card img { width:100%; height:70px; object-fit:cover; display:block; }
+    .hero-mini-card-body { padding:7px 10px 9px; }
+    .hero-mini-card-name { font-size:.72rem; font-weight:600; color:var(--dark); white-space:nowrap; overflow:hidden; text-overflow:ellipsis; }
+    .hero-mini-card-price { font-size:.7rem; color:var(--primary); font-weight:600; margin-top:1px; }
+    .hero-mini-card-badge { position:absolute; top:5px; right:5px; background:rgba(255,255,255,.92); border-radius:6px; padding:2px 6px; font-size:.62rem; font-weight:700; color:var(--dark); display:flex; align-items:center; gap:2px; }
+    .star-gold { color:#f59e0b; }
+    .hero-float-badge { position:absolute; top:-4px; right:-16px; z-index:3; background:var(--primary); color:#fff; border-radius:12px; padding:10px 16px; font-size:.78rem; font-weight:600; box-shadow:0 8px 24px rgba(45,91,227,.35); animation:floatAnim 4s 2s ease-in-out infinite; text-align:center; white-space:nowrap; }
+    .badge-num { font-family:var(--font-display); font-size:1.5rem; font-weight:800; display:block; line-height:1; }
+    .hero-float-card { position:absolute; bottom:-4px; left:-16px; z-index:3; background:#fff; border:1px solid var(--border); border-radius:14px; padding:12px 16px; box-shadow:var(--shadow-lg); animation:floatAnim 4s ease-in-out infinite; }
+    .float-card-row { display:flex; align-items:center; gap:10px; margin-bottom:5px; }
+    .float-avatar { width:30px; height:30px; border-radius:50%; background:var(--primary); color:#fff; font-size:.72rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .float-name { font-size:.8rem; font-weight:600; color:var(--dark); }
+    .float-stars { color:#f59e0b; font-size:.68rem; }
+    .float-text { font-size:.72rem; color:var(--mid); max-width:160px; line-height:1.45; }
+
+    /* STATS BAR */
+    .stats-bar { background:var(--primary); padding:36px 1.5rem; }
+    .stats-bar-inner { max-width:1200px; margin:0 auto; display:grid; grid-template-columns:repeat(4,1fr); }
+    .stat-block { text-align:center; padding:0 1rem; border-right:1px solid rgba(255,255,255,.2); }
+    .stat-block:last-child { border-right:none; }
+    .stat-block strong { display:block; font-family:var(--font-display); font-size:clamp(1.7rem,2.5vw,2.2rem); font-weight:800; color:#fff; line-height:1; margin-bottom:4px; }
+    .stat-block span { font-size:.82rem; color:rgba(255,255,255,.75); }
+
+    /* FEATURES */
+    .features-section { padding:88px 1.5rem; background:#fff; }
+    .features-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:28px; margin-top:48px; }
+    .feature-card { background:var(--light); border:1.5px solid transparent; border-radius:var(--radius); padding:36px 28px; transition:all .25s; position:relative; overflow:hidden; }
+    .feature-card::before { content:''; position:absolute; top:0; left:0; right:0; height:3px; background:linear-gradient(90deg,var(--primary),#60a5fa); transform:scaleX(0); transform-origin:left; transition:transform .3s ease; }
+    .feature-card:hover { border-color:rgba(45,91,227,.18); background:#fff; transform:translateY(-4px); box-shadow:var(--shadow-lg); }
+    .feature-card:hover::before { transform:scaleX(1); }
+    .feature-icon { width:52px; height:52px; border-radius:14px; background:#fff; border:1.5px solid rgba(45,91,227,.15); display:flex; align-items:center; justify-content:center; margin-bottom:20px; color:var(--primary); transition:all .25s; }
+    .feature-card:hover .feature-icon { background:var(--primary); color:#fff; border-color:transparent; }
+    .feature-card h3 { font-family:var(--font-display); font-size:1.05rem; font-weight:700; color:var(--dark); margin-bottom:10px; }
+    .feature-card p { font-size:.88rem; color:var(--mid); line-height:1.75; }
+    .feature-tag { display:inline-flex; align-items:center; gap:5px; margin-top:16px; font-size:.75rem; font-weight:600; color:var(--primary); }
+
+    /* SHARED */
+    .section-wrap { max-width:1200px; margin:0 auto; }
+    .section-eyebrow { display:inline-block; font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:10px; }
+    .section-title { font-family:var(--font-display); font-size:clamp(1.5rem,2.5vw,2rem); font-weight:700; color:var(--dark); margin-bottom:8px; letter-spacing:-.02em; }
+    .section-sub { font-size:.92rem; color:var(--mid); margin-bottom:36px; }
+
+    /* CATEGORIES */
+    .categories-section { padding:80px 1.5rem; background:#fafafa; }
+    .categories-grid { display:grid; grid-template-columns:repeat(auto-fill,minmax(130px,1fr)); gap:14px; }
+    .cat-card { background:#fff; border:1.5px solid var(--border); border-radius:var(--radius); padding:22px 12px; text-align:center; cursor:pointer; transition:all .22s; text-decoration:none; display:flex; flex-direction:column; align-items:center; gap:10px; }
+    .cat-card:hover { border-color:var(--primary); background:var(--light); transform:translateY(-3px); box-shadow:var(--shadow); }
+    .cat-icon-wrap { width:48px; height:48px; border-radius:12px; display:flex; align-items:center; justify-content:center; transition:transform .22s; }
+    .cat-card:hover .cat-icon-wrap { transform:scale(1.1); }
+    .cat-name { font-size:.8rem; font-weight:600; color:var(--dark); line-height:1.3; }
+    .cat-count { font-size:.7rem; color:var(--mid); }
+
+    /* HOW IT WORKS */
+    .hiw-section { padding:80px 1.5rem; background:#fff; }
+    .hiw-tabs-row { display:flex; background:rgba(45,91,227,.1); border-radius:10px; padding:4px; width:fit-content; margin-bottom:44px; }
+    .hiw-tab { padding:9px 22px; border:none; background:transparent; border-radius:7px; font-family:var(--font-body); font-size:.88rem; font-weight:500; color:var(--mid); cursor:pointer; transition:all .18s; }
+    .hiw-tab.active { background:var(--primary); color:#fff; font-weight:600; }
+    .hiw-panel { display:none; }
+    .hiw-panel.active { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; }
+    .hiw-step { background:var(--light); border:1.5px solid var(--border); border-radius:var(--radius); padding:30px 24px; position:relative; overflow:hidden; transition:box-shadow .22s,transform .22s; }
+    .hiw-step:hover { box-shadow:var(--shadow); transform:translateY(-2px); }
+    .hiw-step-num { position:absolute; top:16px; right:18px; font-family:var(--font-display); font-size:4.5rem; font-weight:800; color:rgba(45,91,227,.06); line-height:1; pointer-events:none; }
+    .hiw-icon-wrap { width:44px; height:44px; border-radius:12px; background:#fff; border:1.5px solid rgba(45,91,227,.15); display:flex; align-items:center; justify-content:center; margin-bottom:16px; color:var(--primary); }
+    .hiw-step h3 { font-size:1.02rem; font-weight:600; color:var(--dark); margin-bottom:8px; }
+    .hiw-step p { font-size:.88rem; color:var(--mid); line-height:1.7; }
+
+    /* FEATURED */
+    .featured-section { padding:80px 1.5rem; background:#fafafa; }
+    .featured-head { display:flex; justify-content:space-between; align-items:flex-end; flex-wrap:wrap; gap:16px; margin-bottom:28px; }
+    .venue-filter-tabs { display:flex; gap:8px; flex-wrap:wrap; margin-bottom:28px; }
+    .vf-tab { padding:6px 16px; border:1.5px solid var(--border); border-radius:100px; background:transparent; font-family:var(--font-body); font-size:.8rem; color:var(--mid); cursor:pointer; transition:all .18s; }
+    .vf-tab.active,.vf-tab:hover { border-color:var(--primary); color:var(--primary); background:var(--light); }
+
+    /* TESTIMONIALS */
+    .testimonials-section { padding:80px 1.5rem; background:#fff; }
+    .testi-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:22px; margin-top:44px; }
+    .testi-card { background:var(--light); border:1.5px solid transparent; border-radius:var(--radius); padding:28px; transition:all .22s; display:flex; flex-direction:column; }
+    .testi-card:hover { border-color:rgba(45,91,227,.2); transform:translateY(-3px); box-shadow:var(--shadow); background:#fff; }
+    .testi-quote-icon { font-family:Georgia,serif; font-size:2.8rem; line-height:.6; color:rgba(45,91,227,.2); margin-bottom:14px; display:block; }
+    .testi-stars { color:#f59e0b; font-size:.85rem; margin-bottom:10px; }
+    .testi-text { font-size:.9rem; color:var(--mid); line-height:1.75; margin-bottom:20px; flex:1; }
+    .testi-footer { display:flex; align-items:center; gap:12px; }
+    .testi-avatar { width:40px; height:40px; border-radius:50%; background:var(--primary); color:#fff; font-size:.85rem; font-weight:700; display:flex; align-items:center; justify-content:center; flex-shrink:0; }
+    .testi-info strong { font-size:.875rem; color:var(--dark); display:block; }
+    .testi-info span { font-size:.75rem; color:var(--mid); }
+
+    /* PRICING */
+    .pricing-section { padding:88px 1.5rem; background:#fafafa; }
+    .pricing-grid { display:grid; grid-template-columns:repeat(3,1fr); gap:24px; margin-top:48px; }
+    .pricing-card { background:#fff; border:1.5px solid var(--border); border-radius:var(--radius); padding:36px 28px 32px; position:relative; transition:all .25s; display:flex; flex-direction:column; }
+    .pricing-card:hover { box-shadow:var(--shadow-lg); transform:translateY(-3px); }
+    .pricing-card.pricing-popular { border-color:var(--primary); background:var(--dark); }
+    .pricing-popular-badge { position:absolute; top:-13px; left:50%; transform:translateX(-50%); background:var(--accent); color:#fff; font-size:.72rem; font-weight:700; letter-spacing:.06em; text-transform:uppercase; padding:4px 14px; border-radius:100px; white-space:nowrap; }
+    .pricing-plan { font-size:.75rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:var(--primary); margin-bottom:8px; }
+    .pricing-popular .pricing-plan { color:rgba(255,255,255,.55); }
+    .pricing-price { font-family:var(--font-display); font-size:3rem; font-weight:800; color:var(--dark); line-height:1; margin-bottom:4px; letter-spacing:-.03em; }
+    .pricing-popular .pricing-price { color:#fff; }
+    .pricing-price sup { font-size:1.2rem; font-weight:600; vertical-align:super; }
+    .pricing-price-sub { font-size:.8rem; color:var(--mid); margin-bottom:20px; }
+    .pricing-popular .pricing-price-sub { color:rgba(255,255,255,.5); }
+    .pricing-desc { font-size:.88rem; color:var(--mid); line-height:1.65; margin-bottom:24px; padding-bottom:24px; border-bottom:1px solid var(--border); }
+    .pricing-popular .pricing-desc { color:rgba(255,255,255,.65); border-bottom-color:rgba(255,255,255,.12); }
+    .pricing-features { list-style:none; display:flex; flex-direction:column; gap:10px; margin-bottom:28px; flex:1; }
+    .pricing-features li { font-size:.87rem; color:var(--mid); display:flex; align-items:flex-start; gap:10px; }
+    .pricing-popular .pricing-features li { color:rgba(255,255,255,.75); }
+    .pricing-check { width:18px; height:18px; border-radius:50%; background:rgba(45,91,227,.12); color:var(--primary); display:flex; align-items:center; justify-content:center; flex-shrink:0; font-size:.62rem; margin-top:1px; }
+    .pricing-popular .pricing-check { background:rgba(255,255,255,.15); color:#fff; }
+    .pricing-cta { margin-top:auto; }
+    .btn-pricing-outline { display:inline-flex; align-items:center; justify-content:center; width:100%; padding:.75rem 1.4rem; border:1.5px solid var(--primary); border-radius:var(--radius-sm); background:transparent; color:var(--primary); font-family:var(--font-body); font-weight:600; font-size:.92rem; cursor:pointer; text-decoration:none; transition:all .2s; }
+    .btn-pricing-outline:hover { background:var(--primary); color:#fff; }
+    .btn-pricing-primary { display:inline-flex; align-items:center; justify-content:center; width:100%; padding:.75rem 1.4rem; border:none; border-radius:var(--radius-sm); background:var(--primary); color:#fff; font-family:var(--font-body); font-weight:600; font-size:.92rem; cursor:pointer; text-decoration:none; transition:all .2s; }
+    .btn-pricing-primary:hover { background:var(--primary-dark); transform:translateY(-1px); box-shadow:0 6px 20px rgba(45,91,227,.4); }
+
+    /* CTA */
+    .cta-section { padding:80px 1.5rem; background:#fff; }
+    .cta-card { max-width:1200px; margin:0 auto; background:var(--dark); border-radius:calc(var(--radius)*1.5); padding:56px 48px; display:grid; grid-template-columns:1fr auto; gap:48px; align-items:center; position:relative; overflow:hidden; }
+    .cta-card::before { content:''; position:absolute; top:-80px; right:-80px; width:360px; height:360px; background:radial-gradient(circle,rgba(45,91,227,.3) 0%,transparent 70%); pointer-events:none; }
+    .cta-label { display:inline-block; font-size:.74rem; font-weight:600; text-transform:uppercase; letter-spacing:.1em; color:rgba(255,255,255,.5); margin-bottom:10px; }
+    .cta-card h2 { font-family:var(--font-display); font-size:clamp(1.5rem,2.5vw,2rem); font-weight:700; color:#fff; margin-bottom:12px; letter-spacing:-.02em; }
+    .cta-card > div > p { color:rgba(255,255,255,.65); font-size:.95rem; max-width:420px; }
+    .cta-benefits { display:flex; flex-direction:column; gap:9px; margin-top:20px; }
+    .cta-benefit { display:flex; align-items:center; gap:10px; font-size:.875rem; color:rgba(255,255,255,.8); }
+    .cta-check { width:18px; height:18px; background:rgba(45,91,227,.4); border-radius:50%; display:flex; align-items:center; justify-content:center; color:#fff; font-size:.7rem; flex-shrink:0; }
+    .cta-actions { display:flex; flex-direction:column; gap:12px; position:relative; z-index:1; }
+    .btn-white { display:inline-flex; align-items:center; justify-content:center; padding:.75rem 1.8rem; border:none; border-radius:var(--radius-sm); background:#fff; color:var(--dark); font-family:var(--font-body); font-weight:600; font-size:.92rem; cursor:pointer; text-decoration:none; transition:all .2s; }
+    .btn-white:hover { background:var(--light); color:var(--primary); }
+    .btn-white-outline { display:inline-flex; align-items:center; justify-content:center; padding:.75rem 1.8rem; border:1.5px solid rgba(255,255,255,.3); border-radius:var(--radius-sm); background:transparent; color:rgba(255,255,255,.8); font-family:var(--font-body); font-weight:500; font-size:.92rem; cursor:pointer; text-decoration:none; transition:all .2s; }
+    .btn-white-outline:hover { border-color:rgba(255,255,255,.7); color:#fff; }
+
+    /* NEWSLETTER */
+    .newsletter-section { padding:72px 1.5rem; background:var(--light); }
+    .newsletter-inner { max-width:600px; margin:0 auto; text-align:center; }
+    .newsletter-inner h2 { font-family:var(--font-display); font-size:clamp(1.3rem,2.5vw,1.7rem); font-weight:700; color:var(--dark); margin-bottom:10px; letter-spacing:-.02em; }
+    .newsletter-inner p { font-size:.92rem; color:var(--mid); margin-bottom:24px; }
+    .newsletter-form { display:flex; gap:10px; max-width:460px; margin:0 auto; }
+    .newsletter-form input { flex:1; padding:12px 16px; border:1.5px solid var(--border); border-radius:var(--radius-sm); background:#fff; color:var(--dark); font-family:var(--font-body); font-size:.9rem; outline:none; transition:border-color .2s; }
+    .newsletter-form input:focus { border-color:var(--primary); }
+    .newsletter-note { font-size:.75rem; color:var(--mid); margin-top:12px; }
+
+    /* FOOTER */
+    .footer-main { background:var(--dark); }
+    .footer-inner { max-width:1200px; margin:0 auto; padding:56px 1.5rem 36px; display:grid; grid-template-columns:2.2fr 1fr 1fr 1fr; gap:32px; }
+    .footer-brand-logo { font-family:var(--font-display); font-size:1.15rem; font-weight:700; color:#fff; display:inline-flex; align-items:center; gap:8px; margin-bottom:14px; text-decoration:none; }
+    .footer-brand-logo span { color:#60a5fa; }
+    .footer-brand p { font-size:.85rem; color:rgba(255,255,255,.5); line-height:1.75; max-width:240px; margin-bottom:20px; }
+    .footer-socials { display:flex; gap:8px; }
+    .footer-social-link { width:34px; height:34px; border-radius:8px; background:rgba(255,255,255,.08); border:1px solid rgba(255,255,255,.1); display:flex; align-items:center; justify-content:center; color:rgba(255,255,255,.6); transition:all .18s; text-decoration:none; }
+    .footer-social-link:hover { background:rgba(255,255,255,.14); color:#fff; }
+    .footer-col h4 { font-size:.82rem; font-weight:600; text-transform:uppercase; letter-spacing:.06em; color:rgba(255,255,255,.4); margin-bottom:14px; }
+    .footer-col a { display:block; font-size:.87rem; color:rgba(255,255,255,.6); margin-bottom:8px; transition:color .18s; }
+    .footer-col a:hover { color:#fff; }
+    .footer-bottom { border-top:1px solid rgba(255,255,255,.08); padding:20px 1.5rem; display:flex; justify-content:space-between; align-items:center; flex-wrap:wrap; gap:10px; max-width:1200px; margin:0 auto; font-size:.78rem; color:rgba(255,255,255,.35); }
+    .footer-bottom a { color:rgba(255,255,255,.5); transition:color .18s; }
+    .footer-bottom a:hover { color:rgba(255,255,255,.8); }
+    .footer-bottom-links { display:flex; gap:20px; flex-wrap:wrap; }
+
+    /* REVEAL */
+    .reveal { opacity:0; transform:translateY(24px); transition:opacity .55s ease,transform .55s ease; }
+    .reveal.visible { opacity:1; transform:translateY(0); }
+    .reveal-d1 { transition-delay:.1s; } .reveal-d2 { transition-delay:.2s; } .reveal-d3 { transition-delay:.3s; }
+
+    /* KEYFRAMES */
+    @keyframes floatUp { from{opacity:0;transform:translateY(28px) scale(.97);}to{opacity:1;transform:translateY(0) scale(1);} }
+    @keyframes floatAnim { 0%,100%{transform:translateY(0);}50%{transform:translateY(-8px);} }
+    @keyframes pulseDot { 0%,100%{opacity:1;transform:scale(1);}50%{opacity:.5;transform:scale(.75);} }
+    @keyframes heroFade { from{opacity:0;transform:translateY(20px);}to{opacity:1;transform:translateY(0);} }
+    .hero-content>*{animation:heroFade .7s ease both;}
+    .hero-content>*:nth-child(1){animation-delay:0s}.hero-content>*:nth-child(2){animation-delay:.1s}.hero-content>*:nth-child(3){animation-delay:.2s}.hero-content>*:nth-child(4){animation-delay:.3s}.hero-content>*:nth-child(5){animation-delay:.4s}
+
+    /* RESPONSIVE */
+    @media(max-width:900px){
+      .hero-section{grid-template-columns:1fr;gap:0;padding-bottom:60px;}
+      .hero-visual{display:none;}
+      .stats-bar-inner{grid-template-columns:repeat(2,1fr);}
+      .stat-block{border-right:none;padding:12px 0;border-bottom:1px solid rgba(255,255,255,.15);}
+      .hiw-panel.active,.features-grid,.testi-grid,.pricing-grid{grid-template-columns:1fr;}
+      .cta-card{grid-template-columns:1fr;padding:40px 28px;}
+      .footer-inner{grid-template-columns:1fr 1fr;}
+    }
+    @media(max-width:600px){
+      .hero-section{padding:80px 1.2rem 60px;}
+      .categories-grid{grid-template-columns:repeat(3,1fr);}
+      .newsletter-form{flex-direction:column;}
+      .footer-inner{grid-template-columns:1fr;}
     }
   </style>
 </head>
 <body>
-<!-- PLACEHOLDER -->
+
+<!-- NAVBAR -->
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="logo" href="index.html">
+      <svg width="26" height="26" viewBox="0 0 26 26" fill="none" aria-hidden="true">
+        <rect x="1.5" y="1.5" width="23" height="23" rx="7" stroke="var(--primary)" stroke-width="1.6" fill="none"/>
+        <path d="M7 19 L13 7 L19 19" stroke="var(--primary)" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+        <line x1="9.5" y1="15" x2="16.5" y2="15" stroke="var(--primary)" stroke-width="1.5" stroke-linecap="round"/>
+      </svg>
+      Event<span>Space</span>
+    </a>
+    <div class="nav-links" id="navLinks">
+      <a href="index.html" class="active">Accueil</a>
+      <a href="search.html">Chercher un lieu</a>
+      <a href="#features">Pourquoi nous</a>
+      <a href="#hiw">Comment ça marche</a>
+      <a href="#pricing">Tarifs</a>
+    </div>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost">Connexion</a>
+      <a href="register.html" class="btn btn-primary">S'inscrire</a>
+      <button class="burger" id="burger" aria-label="Menu" aria-expanded="false">
+        <span></span><span></span><span></span>
+      </button>
+    </div>
+  </div>
+</nav>
+
+<!-- HERO -->
+<section class="hero-section">
+  <div class="hero-content">
+    <div class="hero-eyebrow">
+      <div class="hero-eyebrow-dot"></div>
+      +1 200 lieux disponibles &middot; Réservation en quelques clics
+    </div>
+    <h1 class="hero-title">Le lieu parfait<br/>pour <em>chaque</em><br/>événement</h1>
+    <p class="hero-subtitle">Salles, jardins, rooftops, lofts&hellip; Réservez auprès d'annonceurs vérifiés partout en France, en toute simplicité.</p>
+    <div class="hero-search-card">
+      <p class="hero-search-label">
+        <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg>
+        Où organiser votre événement ?
+      </p>
+      <div class="hero-search-row">
+        <input type="text" placeholder="Ville, code postal…" id="heroCity" />
+        <select id="heroType">
+          <option value="">Type d'événement</option>
+          <option>Anniversaire</option><option>Mariage</option><option>Séminaire</option>
+          <option>Soirée privée</option><option>Shooting photo</option><option>Autre</option>
+        </select>
+        <button class="btn btn-primary" onclick="heroSearch()">Chercher</button>
+      </div>
+      <div class="hero-tags">
+        <button class="hero-tag" onclick="setHeroTag('Mariage')">💍 Mariage</button>
+        <button class="hero-tag" onclick="setHeroTag('Anniversaire')">🎂 Anniversaire</button>
+        <button class="hero-tag" onclick="setHeroTag('Séminaire')">💼 Séminaire</button>
+        <button class="hero-tag" onclick="setHeroTag('Soirée privée')">🥂 Soirée privée</button>
+      </div>
+    </div>
+    <div class="hero-mini-stats">
+      <div class="hero-mini-stat"><strong class="counter" data-target="1200" data-suffix="+">0</strong><span>Lieux référencés</span></div>
+      <div class="hero-mini-stat"><strong class="counter" data-target="8400" data-suffix="+">0</strong><span>Événements organisés</span></div>
+      <div class="hero-mini-stat"><strong>4.8<small style="font-size:.9rem;font-weight:500">/5</small></strong><span>Note moyenne</span></div>
+    </div>
+  </div>
+  <div class="hero-visual">
+    <div class="hero-visual-inner">
+      <div class="hero-img-wrap">
+        <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=900&q=80" alt="Salle de réception lumineuse" width="460" height="300" loading="eager"/>
+      </div>
+      <div class="hero-mini-cards">
+        <div class="hero-mini-card" onclick="window.location='search.html'">
+          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=400&q=75" alt="Loft Paris" loading="lazy" width="220" height="70"/>
+          <div class="hero-mini-card-badge"><span class="star-gold">★</span> 4.9</div>
+          <div class="hero-mini-card-body">
+            <div class="hero-mini-card-name">Loft Bastille</div>
+            <div class="hero-mini-card-price">120 €/h</div>
+          </div>
+        </div>
+        <div class="hero-mini-card" onclick="window.location='search.html'">
+          <img src="https://images.unsplash.com/photo-1519741497674-611481863552?w=400&q=75" alt="Rooftop Paris" loading="lazy" width="220" height="70"/>
+          <div class="hero-mini-card-badge"><span class="star-gold">★</span> 4.8</div>
+          <div class="hero-mini-card-body">
+            <div class="hero-mini-card-name">Rooftop Marais</div>
+            <div class="hero-mini-card-price">250 €/h</div>
+          </div>
+        </div>
+      </div>
+      <div class="hero-float-badge"><span class="badge-num">98%</span>satisfaction</div>
+      <div class="hero-float-card">
+        <div class="float-card-row">
+          <div class="float-avatar">M</div>
+          <div><div class="float-name">Marie L.</div><div class="float-stars">★★★★★</div></div>
+        </div>
+        <p class="float-text">« Lieu sublime, réservation en 3 minutes ! »</p>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- STATS BAR -->
+<div class="stats-bar">
+  <div class="stats-bar-inner">
+    <div class="stat-block reveal"><strong class="counter" data-target="1200" data-suffix="+">0</strong><span>Lieux référencés</span></div>
+    <div class="stat-block reveal reveal-d1"><strong class="counter" data-target="8400" data-suffix="+">0</strong><span>Événements organisés</span></div>
+    <div class="stat-block reveal reveal-d2"><strong class="counter" data-target="98" data-suffix="%">0</strong><span>Satisfaction client</span></div>
+    <div class="stat-block reveal reveal-d3"><strong>4.8<small style="font-size:1rem;font-weight:500;opacity:.8">/5</small></strong><span>Note moyenne</span></div>
+  </div>
+</div>
+
+<!-- FEATURES -->
+<section class="features-section" id="features">
+  <div class="section-wrap">
+    <div class="reveal">
+      <p class="section-eyebrow">Pourquoi EventSpace</p>
+      <h2 class="section-title">La plateforme événementielle<br/>la plus fiable de France</h2>
+      <p class="section-sub">Des milliers d'organisateurs et de propriétaires nous font confiance chaque mois.</p>
+    </div>
+    <div class="features-grid">
+      <div class="feature-card reveal">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M9 12l2 2 4-4m5.618-4.016A11.955 11.955 0 0112 2.944a11.955 11.955 0 01-8.618 3.04A12.02 12.02 0 003 9c0 5.591 3.824 10.29 9 11.622 5.176-1.332 9-6.03 9-11.622 0-1.042-.133-2.052-.382-3.016z"/></svg></div>
+        <h3>Lieux vérifiés &amp; certifiés</h3>
+        <p>Chaque annonce passe par notre processus de vérification : photos authentiques, capacités exactes, équipements contrôlés. Zéro mauvaise surprise.</p>
+        <div class="feature-tag">✓ 1 200+ lieux validés</div>
+      </div>
+      <div class="feature-card reveal reveal-d1">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div>
+        <h3>Confirmation en moins de 24h</h3>
+        <p>Notre système de réservation et nos annonceurs réactifs vous garantissent une réponse rapide. Planifiez l'esprit tranquille.</p>
+        <div class="feature-tag">✓ Délai moyen : 4h</div>
+      </div>
+      <div class="feature-card reveal reveal-d2">
+        <div class="feature-icon"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div>
+        <h3>Paiements 100% sécurisés</h3>
+        <p>Paiement chiffré, acompte protégé, remboursement garanti en cas d'annulation conforme. Votre argent est entre de bonnes mains.</p>
+        <div class="feature-tag">✓ Protégé par 3D Secure</div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CATEGORIES -->
+<section class="categories-section">
+  <div class="section-wrap reveal">
+    <p class="section-eyebrow">Explorer par type</p>
+    <h2 class="section-title">Quel espace cherchez-vous ?</h2>
+    <p class="section-sub">Des dizaines de catégories pour chaque occasion</p>
+    <div class="categories-grid">
+      <a href="search.html?type=salle" class="cat-card"><div class="cat-icon-wrap" style="background:#eef2ff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#2d5be3" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 9l9-7 9 7v11a2 2 0 01-2 2H5a2 2 0 01-2-2z"/><polyline points="9 22 9 12 15 12 15 22"/></svg></div><span class="cat-name">Salle de réception</span><span class="cat-count">340 lieux</span></a>
+      <a href="search.html?type=rooftop" class="cat-card"><div class="cat-icon-wrap" style="background:#fef3c7"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#d97706" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="12" cy="12" r="5"/><line x1="12" y1="1" x2="12" y2="3"/><line x1="12" y1="21" x2="12" y2="23"/><line x1="4.22" y1="4.22" x2="5.64" y2="5.64"/><line x1="18.36" y1="18.36" x2="19.78" y2="19.78"/><line x1="1" y1="12" x2="3" y2="12"/><line x1="21" y1="12" x2="23" y2="12"/><line x1="4.22" y1="19.78" x2="5.64" y2="18.36"/><line x1="18.36" y1="5.64" x2="19.78" y2="4.22"/></svg></div><span class="cat-name">Rooftop</span><span class="cat-count">89 lieux</span></a>
+      <a href="search.html?type=jardin" class="cat-card"><div class="cat-icon-wrap" style="background:#dcfce7"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#16a34a" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M12 22V12m0 0C12 7 7 4 3 6c0 4 3 8 9 6"/><path d="M12 12c0-5 5-8 9-6 0 4-3 8-9 6"/></svg></div><span class="cat-name">Jardin / Parc</span><span class="cat-count">156 lieux</span></a>
+      <a href="search.html?type=loft" class="cat-card"><div class="cat-icon-wrap" style="background:#f3e8ff"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#9333ea" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="3" width="20" height="14" rx="2"/><line x1="8" y1="21" x2="16" y2="21"/><line x1="12" y1="17" x2="12" y2="21"/></svg></div><span class="cat-name">Loft industriel</span><span class="cat-count">112 lieux</span></a>
+      <a href="search.html?type=chateau" class="cat-card"><div class="cat-icon-wrap" style="background:#fff7ed"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ea580c" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M3 21V7l4-4h10l4 4v14"/><path d="M9 21v-6h6v6"/><path d="M3 11h18"/></svg></div><span class="cat-name">Château / Manoir</span><span class="cat-count">64 lieux</span></a>
+      <a href="search.html?type=plage" class="cat-card"><div class="cat-icon-wrap" style="background:#e0f2fe"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#0284c7" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M2 22h20"/><path d="M12 2C6.5 2 2 6 2 12h20c0-6-4.5-10-10-10z"/><path d="M7 22v-5l5-3 5 3v5"/></svg></div><span class="cat-name">Plage / Mer</span><span class="cat-count">78 lieux</span></a>
+      <a href="search.html?type=studio" class="cat-card"><div class="cat-icon-wrap" style="background:#fdf2f8"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#db2777" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="3" width="18" height="18" rx="2"/><circle cx="8.5" cy="8.5" r="1.5"/><polyline points="21 15 16 10 5 21"/></svg></div><span class="cat-name">Studio / Galerie</span><span class="cat-count">203 lieux</span></a>
+      <a href="search.html?type=cave" class="cat-card"><div class="cat-icon-wrap" style="background:#fef9c3"><svg width="22" height="22" viewBox="0 0 24 24" fill="none" stroke="#ca8a04" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M8 22h8"/><path d="M7 10h10"/><path d="M12 15a5 5 0 005-5V4H7v6a5 5 0 005 5z"/></svg></div><span class="cat-name">Cave / Chai</span><span class="cat-count">47 lieux</span></a>
+    </div>
+  </div>
+</section>
+
+<!-- HOW IT WORKS -->
+<section class="hiw-section" id="hiw">
+  <div class="section-wrap">
+    <p class="section-eyebrow">Simple &amp; rapide</p>
+    <h2 class="section-title">Comment ça marche ?</h2>
+    <div class="hiw-tabs-row">
+      <button class="hiw-tab active" onclick="hiwSwitch(this,'p')">Je cherche un lieu</button>
+      <button class="hiw-tab" onclick="hiwSwitch(this,'a')">Je loue mon lieu</button>
+    </div>
+    <div class="hiw-panel active" id="hiw-p">
+      <div class="hiw-step reveal"><span class="hiw-step-num">01</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><circle cx="11" cy="11" r="8"/><path d="m21 21-4.35-4.35"/></svg></div><h3>Cherchez</h3><p>Filtrez par ville, capacité, type d'espace et budget. 1 200+ adresses vérifiées partout en France.</p></div>
+      <div class="hiw-step reveal reveal-d1"><span class="hiw-step-num">02</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="3" y="4" width="18" height="18" rx="2"/><line x1="16" y1="2" x2="16" y2="6"/><line x1="8" y1="2" x2="8" y2="6"/><line x1="3" y1="10" x2="21" y2="10"/></svg></div><h3>Réservez</h3><p>Choisissez vos dates, envoyez une demande et obtenez une confirmation en moins de 24h.</p></div>
+      <div class="hiw-step reveal reveal-d2"><span class="hiw-step-num">03</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M22 11.08V12a10 10 0 11-5.93-9.14"/><polyline points="22 4 12 14.01 9 11.01"/></svg></div><h3>Profitez</h3><p>Vivez votre événement sereinement, couvert par nos garanties et notre support 7j/7.</p></div>
+    </div>
+    <div class="hiw-panel" id="hiw-a">
+      <div class="hiw-step"><span class="hiw-step-num">01</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M23 19a2 2 0 01-2 2H3a2 2 0 01-2-2V8a2 2 0 012-2h4l2-3h6l2 3h4a2 2 0 012 2z"/><circle cx="12" cy="13" r="4"/></svg></div><h3>Publiez</h3><p>Créez votre annonce en 10 minutes : photos, description, équipements et tarification.</p></div>
+      <div class="hiw-step"><span class="hiw-step-num">02</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M21 15a2 2 0 01-2 2H7l-4 4V5a2 2 0 012-2h14a2 2 0 012 2z"/></svg></div><h3>Recevez des demandes</h3><p>Les organisateurs vous contactent directement. Gérez vos dispo depuis votre tableau de bord.</p></div>
+      <div class="hiw-step"><span class="hiw-step-num">03</span><div class="hiw-icon-wrap"><svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="5" width="20" height="14" rx="2"/><line x1="2" y1="10" x2="22" y2="10"/></svg></div><h3>Encaissez</h3><p>Paiements sécurisés et virements rapides. Gagnez jusqu'à 3 000 €/mois avec votre espace.</p></div>
+    </div>
+  </div>
+</section>
+
+<!-- FEATURED VENUES -->
+<section class="featured-section">
+  <div class="section-wrap">
+    <div class="featured-head">
+      <div><p class="section-eyebrow">Sélection du moment</p><h2 class="section-title">Lieux à la une</h2></div>
+      <a href="search.html" class="btn btn-outline">Voir tous les lieux →</a>
+    </div>
+    <div class="venue-filter-tabs">
+      <button class="vf-tab active" onclick="filterVenues(this,'')">Tous</button>
+      <button class="vf-tab" onclick="filterVenues(this,'Salle')">Salles</button>
+      <button class="vf-tab" onclick="filterVenues(this,'Rooftop')">Rooftops</button>
+      <button class="vf-tab" onclick="filterVenues(this,'Loft')">Lofts</button>
+      <button class="vf-tab" onclick="filterVenues(this,'Jardin')">Jardins</button>
+    </div>
+    <div class="venues-grid" id="featuredVenues"></div>
+  </div>
+</section>
+
+<!-- TESTIMONIALS -->
+<section class="testimonials-section" id="testimonials">
+  <div class="section-wrap">
+    <div class="reveal"><p class="section-eyebrow">Ce qu'ils disent</p><h2 class="section-title">Des milliers d'événements réussis</h2></div>
+    <div class="testi-grid">
+      <div class="testi-card reveal"><span class="testi-quote-icon">&ldquo;</span><div class="testi-stars">★★★★★</div><p class="testi-text">EventSpace m'a permis de trouver la salle de mariage de mes rêves en moins d'une heure. La réservation était fluide et l'annonceur très réactif. Je recommande à 1000&nbsp;%.</p><div class="testi-footer"><div class="testi-avatar">S</div><div class="testi-info"><strong>Sophie M.</strong><span>Mariage à Bordeaux</span></div></div></div>
+      <div class="testi-card reveal reveal-d1"><span class="testi-quote-icon">&ldquo;</span><div class="testi-stars">★★★★★</div><p class="testi-text">Nous organisons des séminaires régulièrement. EventSpace est devenu indispensable. Gain de temps considérable et lieux toujours de qualité professionnelle.</p><div class="testi-footer"><div class="testi-avatar" style="background:#4a7fbf">T</div><div class="testi-info"><strong>Thomas B.</strong><span>Directeur RH, Paris</span></div></div></div>
+      <div class="testi-card reveal reveal-d2"><span class="testi-quote-icon">&ldquo;</span><div class="testi-stars">★★★★★</div><p class="testi-text">J'ai mis mon loft en location il y a 6 mois. Résultat : +2 800&nbsp;€ de revenus supplémentaires par mois. La plateforme est vraiment bien pensée pour les annonceurs.</p><div class="testi-footer"><div class="testi-avatar" style="background:#4a9f49">L</div><div class="testi-info"><strong>Laura V.</strong><span>Propriétaire, Lyon</span></div></div></div>
+    </div>
+  </div>
+</section>
+
+<!-- PRICING -->
+<section class="pricing-section" id="pricing">
+  <div class="section-wrap">
+    <div class="reveal" style="text-align:center">
+      <p class="section-eyebrow">Nos tarifs</p>
+      <h2 class="section-title">Transparent, sans surprise</h2>
+      <p class="section-sub">Gratuit pour commencer. Passez au niveau supérieur quand vous en avez besoin.</p>
+    </div>
+    <div class="pricing-grid">
+      <div class="pricing-card reveal">
+        <div class="pricing-plan">Particulier</div>
+        <div class="pricing-price"><sup>€</sup>0</div>
+        <div class="pricing-price-sub">Gratuit pour toujours</div>
+        <div class="pricing-desc">Tout ce qu'il faut pour trouver et réserver votre prochain lieu d'événement.</div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check">✓</span> Accès à +1 200 lieux</li>
+          <li><span class="pricing-check">✓</span> Recherche &amp; filtres avancés</li>
+          <li><span class="pricing-check">✓</span> Demandes de réservation</li>
+          <li><span class="pricing-check">✓</span> Messagerie avec les annonceurs</li>
+          <li><span class="pricing-check">✓</span> Historique de réservations</li>
+        </ul>
+        <div class="pricing-cta"><a href="register.html" class="btn-pricing-outline">Commencer gratuitement</a></div>
+      </div>
+      <div class="pricing-card pricing-popular reveal reveal-d1">
+        <div class="pricing-popular-badge">⭐ Le plus populaire</div>
+        <div class="pricing-plan">Pro</div>
+        <div class="pricing-price"><sup>€</sup>19</div>
+        <div class="pricing-price-sub">par mois, sans engagement</div>
+        <div class="pricing-desc">Pour les organisateurs réguliers qui veulent des fonctionnalités avancées.</div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check">✓</span> Tout le plan Particulier</li>
+          <li><span class="pricing-check">✓</span> Réservation prioritaire</li>
+          <li><span class="pricing-check">✓</span> Alertes nouveaux lieux</li>
+          <li><span class="pricing-check">✓</span> Accès aux lieux exclusifs</li>
+          <li><span class="pricing-check">✓</span> Support dédié 7j/7</li>
+          <li><span class="pricing-check">✓</span> Facturation simplifiée</li>
+        </ul>
+        <div class="pricing-cta"><a href="register.html?plan=pro" class="btn-pricing-primary">Choisir le plan Pro</a></div>
+      </div>
+      <div class="pricing-card reveal reveal-d2">
+        <div class="pricing-plan">Annonceur</div>
+        <div class="pricing-price" style="font-size:2.2rem">0%</div>
+        <div class="pricing-price-sub">de commission — paiement à la réservation</div>
+        <div class="pricing-desc">Pour les propriétaires qui veulent monétiser leur espace sans abonnement.</div>
+        <ul class="pricing-features">
+          <li><span class="pricing-check">✓</span> Publication illimitée d'annonces</li>
+          <li><span class="pricing-check">✓</span> Tableau de bord annonceur</li>
+          <li><span class="pricing-check">✓</span> Gestion des disponibilités</li>
+          <li><span class="pricing-check">✓</span> Paiement sécurisé sous 48h</li>
+          <li><span class="pricing-check">✓</span> Statistiques de visibilité</li>
+        </ul>
+        <div class="pricing-cta"><a href="register.html?role=annonceur" class="btn-pricing-outline">Devenir annonceur</a></div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- CTA ANNONCEUR -->
+<section class="cta-section">
+  <div class="cta-card reveal">
+    <div>
+      <span class="cta-label">Pour les propriétaires</span>
+      <h2>Vous avez un lieu à louer ?</h2>
+      <p>Rejoignez EventSpace et mettez votre espace en avant auprès de milliers d'organisateurs d'événements partout en France.</p>
+      <div class="cta-benefits">
+        <div class="cta-benefit"><span class="cta-check">✓</span> Publication gratuite, sans commission cachée</div>
+        <div class="cta-benefit"><span class="cta-check">✓</span> Gestion simplifiée des disponibilités</div>
+        <div class="cta-benefit"><span class="cta-check">✓</span> Paiements sécurisés, virements en 48h</div>
+        <div class="cta-benefit"><span class="cta-check">✓</span> Support dédié 7j/7</div>
+      </div>
+    </div>
+    <div class="cta-actions">
+      <a href="register.html?role=annonceur" class="btn-white">Devenir annonceur →</a>
+      <a href="#hiw" class="btn-white-outline">En savoir plus</a>
+    </div>
+  </div>
+</section>
+
+<!-- NEWSLETTER -->
+<section class="newsletter-section">
+  <div class="newsletter-inner reveal">
+    <p class="section-eyebrow">Restez informé</p>
+    <h2>Les meilleurs lieux, chaque semaine</h2>
+    <p>Recevez nos sélections, nouveautés et offres exclusives directement dans votre boîte mail.</p>
+    <form class="newsletter-form" onsubmit="handleNewsletter(event)">
+      <input type="email" id="newsletterEmail" placeholder="votre@email.fr" required />
+      <button type="submit" class="btn btn-primary">S'abonner</button>
+    </form>
+    <p class="newsletter-note">Pas de spam. Désabonnement en 1 clic. Données protégées RGPD.</p>
+  </div>
+</section>
+
+<!-- FOOTER -->
+<footer class="footer-main">
+  <div class="footer-inner">
+    <div class="footer-brand">
+      <a class="footer-brand-logo" href="index.html">
+        <svg width="22" height="22" viewBox="0 0 26 26" fill="none"><rect x="1.5" y="1.5" width="23" height="23" rx="7" stroke="currentColor" stroke-width="1.6" fill="none"/><path d="M7 19 L13 7 L19 19" stroke="currentColor" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><line x1="9.5" y1="15" x2="16.5" y2="15" stroke="currentColor" stroke-width="1.5" stroke-linecap="round"/></svg>
+        Event<span>Space</span>
+      </a>
+      <p>La plateforme de mise en relation entre propriétaires de lieux événementiels et organisateurs d'événements en France.</p>
+      <div class="footer-socials">
+        <a href="#" class="footer-social-link" aria-label="Instagram"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><rect x="2" y="2" width="20" height="20" rx="5"/><path d="M16 11.37A4 4 0 1112.63 8 4 4 0 0116 11.37z"/><line x1="17.5" y1="6.5" x2="17.51" y2="6.5"/></svg></a>
+        <a href="#" class="footer-social-link" aria-label="LinkedIn"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M16 8a6 6 0 016 6v7h-4v-7a2 2 0 00-2-2 2 2 0 00-2 2v7h-4v-7a6 6 0 016-6z"/><rect x="2" y="9" width="4" height="12"/><circle cx="4" cy="4" r="2"/></svg></a>
+        <a href="#" class="footer-social-link" aria-label="Facebook"><svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round"><path d="M18 2h-3a5 5 0 00-5 5v3H7v4h3v8h4v-8h3l1-4h-4V7a1 1 0 011-1h3z"/></svg></a>
+      </div>
+    </div>
+    <div class="footer-col"><h4>Plateforme</h4><a href="search.html">Chercher un lieu</a><a href="register.html?role=annonceur">Proposer mon lieu</a><a href="#hiw">Comment ça marche</a><a href="#pricing">Nos tarifs</a><a href="#testimonials">Avis clients</a></div>
+    <div class="footer-col"><h4>Légal</h4><a href="#">CGU</a><a href="#">CGV</a><a href="#">Confidentialité</a><a href="#">Mentions légales</a></div>
+    <div class="footer-col"><h4>Support</h4><a href="mailto:contact@eventspace.fr">contact@eventspace.fr</a><a href="#">FAQ</a><a href="#">Centre d'aide</a><a href="#">Signaler un problème</a></div>
+  </div>
+  <div class="footer-bottom">
+    <span>&copy; 2026 EventSpace SAS – Tous droits réservés</span>
+    <div class="footer-bottom-links"><a href="#">Confidentialité</a><a href="#">CGU</a><a href="#">Mentions légales</a></div>
+  </div>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/app.js"></script>
+<script>
+  window.addEventListener('scroll',()=>document.getElementById('navbar').classList.toggle('scrolled',window.scrollY>40));
+  const burger=document.getElementById('burger'),navLinks=document.getElementById('navLinks');
+  burger.addEventListener('click',()=>{const o=navLinks.classList.toggle('open');burger.setAttribute('aria-expanded',o);});
+  document.addEventListener('click',(e)=>{if(!burger.contains(e.target)&&!navLinks.contains(e.target))navLinks.classList.remove('open');});
+  function hiwSwitch(btn,id){document.querySelectorAll('.hiw-tab').forEach(b=>b.classList.remove('active'));document.querySelectorAll('.hiw-panel').forEach(p=>p.classList.remove('active'));btn.classList.add('active');document.getElementById('hiw-'+id).classList.add('active');}
+  function filterVenues(btn,type){document.querySelectorAll('.vf-tab').forEach(b=>b.classList.remove('active'));btn.classList.add('active');renderFeatured(type);}
+  function heroSearch(){const city=document.getElementById('heroCity').value.trim(),type=document.getElementById('heroType').value,p=new URLSearchParams();if(city)p.set('city',city);if(type)p.set('type',type);window.location.href='search.html'+(p.toString()?'?'+p.toString():'');}
+  function setHeroTag(type){document.getElementById('heroType').value=type;heroSearch();}
+  document.getElementById('heroCity').addEventListener('keydown',e=>{if(e.key==='Enter')heroSearch();});
+  function handleNewsletter(e){e.preventDefault();const btn=e.target.querySelector('button');btn.textContent='✓ Inscrit !';btn.style.background='#16a34a';btn.disabled=true;setTimeout(()=>{btn.textContent="S'abonner";btn.style.background='';btn.disabled=false;e.target.reset();},3000);}
+  const ioReveal=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){e.target.classList.add('visible');ioReveal.unobserve(e.target);}});},{threshold:0.12});
+  document.querySelectorAll('.reveal').forEach(el=>ioReveal.observe(el));
+  const ioCount=new IntersectionObserver(entries=>{entries.forEach(e=>{if(e.isIntersecting){const el=e.target,target=parseInt(el.dataset.target),suffix=el.dataset.suffix||'';let start=0;const step=ts=>{if(!start)start=ts;const p=Math.min((ts-start)/1600,1);el.textContent=Math.floor(p*target).toLocaleString('fr-FR')+suffix;if(p<1)requestAnimationFrame(step);};requestAnimationFrame(step);ioCount.unobserve(el);}});},{threshold:0.5});
+  document.querySelectorAll('.counter').forEach(el=>ioCount.observe(el));
+  function renderFeatured(typeFilter){const container=document.getElementById('featuredVenues');if(!container||typeof VENUES==='undefined')return;const list=VENUES.filter(v=>v.published).filter(v=>!typeFilter||v.type.toLowerCase().includes(typeFilter.toLowerCase())).slice(0,6);container.innerHTML=list.map(v=>`<div class="venue-card" onclick="window.location='venue.html?id=${v.id}'"><img class="venue-card-img" src="${v.img}" alt="${v.name}" loading="lazy" width="300" height="188"/><div class="venue-card-body"><div class="venue-card-type">${v.type}</div><h3>${v.name}</h3><div class="venue-card-meta"><span>📍 ${v.city}</span><span>👥 ${v.capacity} pers.</span></div><div class="venue-card-meta-row"><span class="venue-card-price">${v.price} €/h</span><span class="venue-card-rating">⭐ ${v.rating} (${v.reviewCount})</span></div></div></div>`).join('');container.querySelectorAll('.venue-card').forEach(el=>ioReveal.observe(el));}
+  renderFeatured('');
+</script>
 </body>
 </html>
