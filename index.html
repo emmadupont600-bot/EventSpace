@@ -6,131 +6,926 @@
   <title>EventSpace – Trouvez le lieu parfait</title>
   <link rel="stylesheet" href="css/style.css" />
   <link rel="preconnect" href="https://fonts.googleapis.com" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Playfair+Display:ital,wght@0,600;0,700;1,600&display=swap" rel="stylesheet" />
+  <style>
+    /* ===== INDEX-SPECIFIC STYLES ===== */
+
+    /* Particles canvas */
+    #hero-canvas {
+      position: absolute; inset: 0; pointer-events: none; z-index: 0;
+      opacity: 0.45;
+    }
+
+    /* Hero redesign */
+    .hero-wrap {
+      position: relative; overflow: hidden;
+      min-height: 100vh;
+      background: radial-gradient(ellipse 80% 60% at 60% 40%, rgba(200,169,110,0.07) 0%, transparent 70%),
+                  radial-gradient(ellipse 50% 40% at 10% 80%, rgba(200,169,110,0.04) 0%, transparent 60%),
+                  var(--bg);
+    }
+    .hero-wrap::before {
+      content: '';
+      position: absolute; inset: 0;
+      background: url("data:image/svg+xml,%3Csvg width='60' height='60' viewBox='0 0 60 60' xmlns='http://www.w3.org/2000/svg'%3E%3Cg fill='none' fill-rule='evenodd'%3E%3Cg fill='%23c8a96e' fill-opacity='0.025'%3E%3Cpath d='M36 34v-4h-2v4h-4v2h4v4h2v-4h4v-2h-4zm0-30V0h-2v4h-4v2h4v4h2V6h4V4h-4zM6 34v-4H4v4H0v2h4v4h2v-4h4v-2H6zM6 4V0H4v4H0v2h4v4h2V6h4V4H6z'/%3E%3C/g%3E%3C/g%3E%3C/svg%3E");
+      z-index: 0;
+    }
+    .hero {
+      position: relative; z-index: 1;
+      display: flex; align-items: center;
+      padding: 120px 24px 80px;
+      max-width: 1100px; margin: 0 auto;
+      gap: 60px; min-height: 100vh;
+    }
+    .hero-content { flex: 1; }
+
+    .hero-eyebrow {
+      display: inline-flex; align-items: center; gap: 8px;
+      padding: 6px 16px; border-radius: 100px;
+      border: 1px solid rgba(200,169,110,0.3);
+      background: rgba(200,169,110,0.08);
+      font-size: 0.8rem; font-weight: 500;
+      color: var(--primary); letter-spacing: 0.04em;
+      margin-bottom: 24px;
+      animation: fadeSlideUp 0.8s ease both;
+    }
+    .hero-eyebrow-dot {
+      width: 6px; height: 6px; border-radius: 50%;
+      background: var(--primary);
+      animation: pulse-dot 2s ease infinite;
+    }
+
+    .hero-title {
+      font-family: 'Playfair Display', Georgia, serif;
+      font-size: clamp(2.4rem, 5.5vw, 4rem);
+      font-weight: 700; line-height: 1.1;
+      color: var(--text); margin-bottom: 20px;
+      animation: fadeSlideUp 0.8s 0.1s ease both;
+    }
+    .hero-title em {
+      font-style: italic;
+      background: linear-gradient(135deg, var(--primary) 0%, #e8c87a 50%, var(--primary) 100%);
+      background-size: 200% auto;
+      -webkit-background-clip: text; -webkit-text-fill-color: transparent;
+      background-clip: text;
+      animation: shimmer-text 3s linear infinite;
+    }
+
+    .hero-sub {
+      font-size: 1.05rem; color: var(--text-light);
+      max-width: 480px; margin-bottom: 36px; line-height: 1.7;
+      animation: fadeSlideUp 0.8s 0.2s ease both;
+    }
+
+    .hero-search-card {
+      background: rgba(20,20,20,0.8);
+      backdrop-filter: blur(20px);
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 16px; padding: 20px;
+      margin-bottom: 40px;
+      box-shadow: 0 8px 40px rgba(0,0,0,0.4), 0 0 0 1px rgba(200,169,110,0.05);
+      animation: fadeSlideUp 0.8s 0.3s ease both;
+    }
+    .hero-search-label {
+      font-size: 0.75rem; text-transform: uppercase; letter-spacing: 0.08em;
+      color: var(--text-muted); margin-bottom: 12px;
+    }
+    .hero-search-row {
+      display: flex; gap: 10px; flex-wrap: wrap;
+    }
+    .hero-search-row input,
+    .hero-search-row select {
+      flex: 1; min-width: 140px;
+      padding: 12px 16px;
+      background: var(--bg-3); border: 1px solid var(--border);
+      border-radius: 10px; color: var(--text);
+      font-family: inherit; font-size: 0.9rem;
+      outline: none; transition: border-color 0.2s;
+    }
+    .hero-search-row input:focus,
+    .hero-search-row select:focus { border-color: var(--primary); }
+    .hero-search-row input::placeholder { color: var(--text-muted); }
+    .hero-search-row select option { background: var(--bg-3); }
+
+    .hero-tags {
+      display: flex; flex-wrap: wrap; gap: 8px; margin-top: 12px;
+    }
+    .hero-tag {
+      padding: 4px 12px; border-radius: 100px;
+      border: 1px solid var(--border);
+      background: transparent;
+      font-size: 0.75rem; color: var(--text-muted);
+      cursor: pointer; transition: all 0.2s;
+    }
+    .hero-tag:hover { border-color: var(--primary); color: var(--primary); }
+
+    .hero-stats {
+      display: flex; gap: 32px;
+      animation: fadeSlideUp 0.8s 0.4s ease both;
+    }
+    .hero-stat strong { font-size: 1.6rem; font-weight: 700; color: var(--text); display: block; }
+    .hero-stat span { font-size: 0.78rem; color: var(--text-muted); }
+
+    /* Hero visual side */
+    .hero-visual { flex: 1; display: flex; justify-content: center; align-items: center; position: relative; }
+    .hero-visual-inner {
+      position: relative; width: 100%; max-width: 360px;
+      animation: floatUp 0.9s 0.2s ease both;
+    }
+    .hero-main-img {
+      border-radius: 20px; overflow: hidden;
+      box-shadow: 0 24px 64px rgba(0,0,0,0.6), 0 0 0 1px rgba(200,169,110,0.12);
+    }
+    .hero-main-img img {
+      width: 100%; height: 280px; object-fit: cover; display: block;
+    }
+    .hero-float-card {
+      position: absolute; bottom: -20px; left: -24px;
+      background: rgba(20,20,20,0.9); backdrop-filter: blur(20px);
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 14px; padding: 14px 18px;
+      box-shadow: 0 12px 32px rgba(0,0,0,0.5);
+      animation: floatAnim 4s ease-in-out infinite;
+    }
+    .float-card-top { display: flex; align-items: center; gap: 8px; margin-bottom: 6px; }
+    .float-card-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--primary); display: flex; align-items: center; justify-content: center; font-size: 0.7rem; font-weight: 700; color: #0d0d0d; }
+    .float-card-name { font-size: 0.8rem; font-weight: 600; color: var(--text); }
+    .float-card-stars { color: var(--primary); font-size: 0.7rem; letter-spacing: 1px; }
+    .float-card-text { font-size: 0.75rem; color: var(--text-muted); max-width: 160px; line-height: 1.4; }
+
+    .hero-float-badge {
+      position: absolute; top: -16px; right: -16px;
+      background: var(--primary); color: #0d0d0d;
+      border-radius: 12px; padding: 10px 16px;
+      font-size: 0.78rem; font-weight: 700;
+      box-shadow: 0 8px 24px rgba(200,169,110,0.3);
+      animation: floatAnim 4s 2s ease-in-out infinite;
+    }
+    .float-badge-num { font-size: 1.4rem; font-weight: 700; display: block; line-height: 1; }
+
+    /* Stats bar */
+    .stats-bar {
+      background: var(--bg-2); border-top: 1px solid var(--border); border-bottom: 1px solid var(--border);
+      padding: 32px 24px;
+    }
+    .stats-bar-inner {
+      max-width: 1100px; margin: 0 auto;
+      display: flex; justify-content: space-around; flex-wrap: wrap; gap: 24px;
+    }
+    .stat-item { text-align: center; }
+    .stat-item strong {
+      display: block; font-size: clamp(1.6rem, 3vw, 2.2rem);
+      font-weight: 700; color: var(--text);
+      font-variant-numeric: tabular-nums;
+    }
+    .stat-item span { font-size: 0.82rem; color: var(--text-muted); }
+
+    /* Categories strip */
+    .categories { padding: 48px 24px; }
+    .categories-inner { max-width: 1100px; margin: 0 auto; }
+    .categories h2 { font-size: clamp(1.4rem, 2.5vw, 1.8rem); color: var(--text); margin-bottom: 8px; }
+    .categories-sub { color: var(--text-muted); font-size: 0.9rem; margin-bottom: 32px; }
+    .categories-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(140px, 1fr));
+      gap: 16px;
+    }
+    .cat-card {
+      background: var(--bg-2); border: 1px solid var(--border);
+      border-radius: 14px; padding: 24px 16px;
+      text-align: center; cursor: pointer;
+      transition: all 0.25s; text-decoration: none;
+      display: flex; flex-direction: column; align-items: center; gap: 10px;
+    }
+    .cat-card:hover {
+      border-color: rgba(200,169,110,0.35);
+      transform: translateY(-3px);
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3);
+    }
+    .cat-icon { font-size: 2rem; }
+    .cat-name { font-size: 0.82rem; font-weight: 500; color: var(--text-light); }
+    .cat-count { font-size: 0.72rem; color: var(--text-muted); }
+
+    /* How it works — redesigned */
+    .hiw {
+      padding: 80px 24px; background: var(--bg-2);
+    }
+    .hiw-inner { max-width: 1100px; margin: 0 auto; }
+    .section-label {
+      display: inline-block; font-size: 0.75rem; font-weight: 600;
+      text-transform: uppercase; letter-spacing: 0.1em;
+      color: var(--primary); margin-bottom: 12px;
+    }
+    .hiw h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem);
+      color: var(--text); margin-bottom: 48px;
+    }
+    .hiw-tabs { display: flex; gap: 0; background: var(--bg-3); border-radius: 12px; padding: 4px; width: fit-content; margin-bottom: 48px; }
+    .hiw-tab { background: none; border: none; color: var(--text-muted); padding: 10px 24px; border-radius: 9px; cursor: pointer; font-size: 0.88rem; font-family: inherit; transition: all 0.2s; }
+    .hiw-tab.active { background: var(--primary); color: #0d0d0d; font-weight: 600; }
+    .hiw-panel { display: none; }
+    .hiw-panel.active { display: grid; grid-template-columns: repeat(3, 1fr); gap: 28px; }
+    .hiw-step {
+      background: var(--bg-3); border: 1px solid var(--border);
+      border-radius: 16px; padding: 32px 28px;
+      position: relative; overflow: hidden;
+      transition: border-color 0.25s, transform 0.25s;
+    }
+    .hiw-step:hover { border-color: rgba(200,169,110,0.25); transform: translateY(-2px); }
+    .hiw-step::before {
+      content: attr(data-step);
+      position: absolute; right: 20px; top: 16px;
+      font-size: 5rem; font-weight: 800;
+      color: rgba(200,169,110,0.06); line-height: 1;
+      font-family: 'Playfair Display', serif;
+    }
+    .hiw-step-icon { font-size: 2.2rem; margin-bottom: 16px; }
+    .hiw-step h3 { font-size: 1rem; font-weight: 600; color: var(--text); margin-bottom: 8px; }
+    .hiw-step p { font-size: 0.875rem; color: var(--text-muted); line-height: 1.7; }
+
+    /* Featured venues */
+    .featured-section { padding: 80px 24px; }
+    .featured-inner { max-width: 1100px; margin: 0 auto; }
+    .featured-head {
+      display: flex; justify-content: space-between; align-items: flex-end;
+      margin-bottom: 36px; flex-wrap: wrap; gap: 16px;
+    }
+    .featured-head h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--text);
+    }
+
+    /* Category tabs for venues */
+    .venue-tabs { display: flex; gap: 8px; flex-wrap: wrap; margin-bottom: 32px; }
+    .venue-tab {
+      padding: 6px 16px; border-radius: 100px;
+      border: 1px solid var(--border); background: transparent;
+      font-size: 0.82rem; color: var(--text-muted);
+      cursor: pointer; transition: all 0.2s; font-family: inherit;
+    }
+    .venue-tab.active, .venue-tab:hover { border-color: var(--primary); color: var(--primary); background: rgba(200,169,110,0.08); }
+
+    /* Testimonials */
+    .testimonials { padding: 80px 24px; background: var(--bg-2); }
+    .testimonials-inner { max-width: 1100px; margin: 0 auto; }
+    .testimonials h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.6rem, 3vw, 2.2rem); color: var(--text);
+      margin-bottom: 48px;
+    }
+    .testimonials-track {
+      display: grid; grid-template-columns: repeat(3, 1fr); gap: 24px;
+    }
+    .testi-card {
+      background: var(--bg-3); border: 1px solid var(--border);
+      border-radius: 16px; padding: 28px;
+      transition: border-color 0.25s, transform 0.25s;
+      position: relative;
+    }
+    .testi-card:hover { border-color: rgba(200,169,110,0.25); transform: translateY(-2px); }
+    .testi-quote {
+      font-size: 2.5rem; line-height: 0.5;
+      color: rgba(200,169,110,0.3);
+      font-family: Georgia, serif;
+      margin-bottom: 16px; display: block;
+    }
+    .testi-text { font-size: 0.9rem; color: var(--text-light); line-height: 1.7; margin-bottom: 20px; }
+    .testi-footer { display: flex; align-items: center; gap: 12px; }
+    .testi-avatar {
+      width: 40px; height: 40px; border-radius: 50%;
+      background: linear-gradient(135deg, var(--primary), #e8c87a);
+      display: flex; align-items: center; justify-content: center;
+      font-size: 0.85rem; font-weight: 700; color: #0d0d0d; flex-shrink: 0;
+    }
+    .testi-info strong { font-size: 0.875rem; color: var(--text); display: block; }
+    .testi-info span { font-size: 0.75rem; color: var(--text-muted); }
+    .testi-stars { color: var(--primary); font-size: 0.8rem; margin-bottom: 2px; }
+
+    /* CTA annonceur — redesigned */
+    .cta-annonceur-section { padding: 80px 24px; }
+    .cta-annonceur-inner {
+      max-width: 1100px; margin: 0 auto;
+      background: linear-gradient(135deg, rgba(200,169,110,0.08) 0%, rgba(200,169,110,0.03) 100%);
+      border: 1px solid rgba(200,169,110,0.2);
+      border-radius: 24px; padding: 64px 48px;
+      display: flex; align-items: center; gap: 48px;
+      position: relative; overflow: hidden;
+    }
+    .cta-annonceur-inner::before {
+      content: '';
+      position: absolute; top: -60px; right: -60px;
+      width: 240px; height: 240px;
+      background: radial-gradient(circle, rgba(200,169,110,0.12) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-annonceur-inner::after {
+      content: '';
+      position: absolute; bottom: -80px; left: 30%;
+      width: 200px; height: 200px;
+      background: radial-gradient(circle, rgba(200,169,110,0.06) 0%, transparent 70%);
+      pointer-events: none;
+    }
+    .cta-text { flex: 1; position: relative; z-index: 1; }
+    .cta-text h2 {
+      font-family: 'Playfair Display', serif;
+      font-size: clamp(1.5rem, 2.5vw, 2rem);
+      color: var(--text); margin-bottom: 12px;
+    }
+    .cta-text p { color: var(--text-muted); font-size: 0.95rem; max-width: 440px; }
+    .cta-benefits { display: flex; flex-direction: column; gap: 10px; margin-top: 20px; }
+    .cta-benefit {
+      display: flex; align-items: center; gap: 10px;
+      font-size: 0.875rem; color: var(--text-light);
+    }
+    .cta-benefit-icon { color: var(--primary); font-size: 1rem; }
+    .cta-actions { display: flex; flex-direction: column; gap: 12px; position: relative; z-index: 1; flex-shrink: 0; }
+
+    /* Scroll reveal */
+    .reveal { opacity: 0; transform: translateY(28px); transition: opacity 0.7s ease, transform 0.7s ease; }
+    .reveal.visible { opacity: 1; transform: translateY(0); }
+    .reveal-delay-1 { transition-delay: 0.1s; }
+    .reveal-delay-2 { transition-delay: 0.2s; }
+    .reveal-delay-3 { transition-delay: 0.3s; }
+
+    /* Keyframes */
+    @keyframes fadeSlideUp {
+      from { opacity: 0; transform: translateY(24px); }
+      to { opacity: 1; transform: translateY(0); }
+    }
+    @keyframes floatUp {
+      from { opacity: 0; transform: translateY(32px) scale(0.96); }
+      to { opacity: 1; transform: translateY(0) scale(1); }
+    }
+    @keyframes floatAnim {
+      0%, 100% { transform: translateY(0px); }
+      50% { transform: translateY(-8px); }
+    }
+    @keyframes pulse-dot {
+      0%, 100% { opacity: 1; transform: scale(1); }
+      50% { opacity: 0.6; transform: scale(0.8); }
+    }
+    @keyframes shimmer-text {
+      0% { background-position: 0% 50%; }
+      100% { background-position: 200% 50%; }
+    }
+
+    /* Responsive */
+    @media (max-width: 900px) {
+      .hiw-panel.active { grid-template-columns: 1fr; }
+      .testimonials-track { grid-template-columns: 1fr; }
+      .cta-annonceur-inner { flex-direction: column; padding: 40px 28px; }
+      .hero-visual { display: none; }
+    }
+    @media (max-width: 600px) {
+      .categories-grid { grid-template-columns: repeat(3, 1fr); }
+      .hero-stats { gap: 20px; }
+    }
+  </style>
 </head>
 <body>
-  <!-- NAV -->
-  <nav id="navbar">
-    <div class="nav-inner">
-      <a class="logo" href="index.html">Event<span>Space</span></a>
+
+  <!-- NAVBAR -->
+  <nav class="navbar" id="navbar">
+    <div class="nav-container">
+      <a class="nav-logo" href="index.html">
+        <svg width="28" height="28" viewBox="0 0 28 28" fill="none" style="display:inline-block;vertical-align:middle;margin-right:6px">
+          <rect x="2" y="2" width="24" height="24" rx="6" fill="none" stroke="#c8a96e" stroke-width="1.5"/>
+          <path d="M8 20 L14 8 L20 20" stroke="#c8a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/>
+          <path d="M10 16 L18 16" stroke="#c8a96e" stroke-width="1.5" stroke-linecap="round"/>
+        </svg>Event<span>Space</span>
+      </a>
       <div class="nav-links" id="navLinks">
         <a href="index.html" class="active">Accueil</a>
         <a href="search.html">Chercher un lieu</a>
-        <a href="#how">Comment ça marche</a>
+        <a href="#hiw">Comment ça marche</a>
+        <a href="#testimonials">Avis</a>
       </div>
       <div class="nav-actions">
         <a href="login.html" class="btn btn-ghost">Connexion</a>
         <a href="register.html" class="btn btn-primary">S'inscrire</a>
-        <button class="burger" id="burger" aria-label="menu">&#9776;</button>
+        <button class="hamburger" id="burger" aria-label="Menu">
+          <span></span><span></span><span></span>
+        </button>
       </div>
     </div>
   </nav>
 
   <!-- HERO -->
-  <section class="hero">
-    <div class="hero-content">
-      <span class="badge">Nouvelle plateforme</span>
-      <h1>Le lieu parfait pour<br/><em>chaque événement</em></h1>
-      <p>Salles, jardins, rooftops, lofts… Réservez en quelques clics auprès d'annonceurs vérifiés.</p>
-      <div class="hero-search">
-        <input type="text" placeholder="Ville, code postal…" id="heroCity" />
-        <select id="heroType">
-          <option value="">Type d'événement</option>
-          <option>Anniversaire</option>
-          <option>Mariage</option>
-          <option>Séminaire</option>
-          <option>Soirée privée</option>
-          <option>Shooting photo</option>
-          <option>Autre</option>
-        </select>
-        <button class="btn btn-primary" onclick="heroSearch()">Rechercher</button>
+  <div class="hero-wrap">
+    <canvas id="hero-canvas"></canvas>
+    <section class="hero">
+      <div class="hero-content">
+        <div class="hero-eyebrow">
+          <div class="hero-eyebrow-dot"></div>
+          Nouvelle plateforme · +1 200 lieux disponibles
+        </div>
+        <h1 class="hero-title">
+          Le lieu parfait<br/>pour <em>chaque événement</em>
+        </h1>
+        <p class="hero-sub">
+          Salles, jardins, rooftops, lofts… Réservez en quelques clics auprès d'annonceurs vérifiés partout en France.
+        </p>
+
+        <div class="hero-search-card">
+          <p class="hero-search-label">🔍 Où souhaitez-vous organiser votre événement ?</p>
+          <div class="hero-search-row">
+            <input type="text" placeholder="Ville, code postal…" id="heroCity" />
+            <select id="heroType">
+              <option value="">Type d'événement</option>
+              <option>Anniversaire</option>
+              <option>Mariage</option>
+              <option>Séminaire</option>
+              <option>Soirée privée</option>
+              <option>Shooting photo</option>
+              <option>Autre</option>
+            </select>
+            <button class="btn btn-primary" onclick="heroSearch()">Rechercher</button>
+          </div>
+          <div class="hero-tags">
+            <span class="hero-tag" onclick="setHeroSearch('Mariage')">💍 Mariage</span>
+            <span class="hero-tag" onclick="setHeroSearch('Anniversaire')">🎂 Anniversaire</span>
+            <span class="hero-tag" onclick="setHeroSearch('Séminaire')">💼 Séminaire</span>
+            <span class="hero-tag" onclick="setHeroSearch('Soirée privée')">🥂 Soirée privée</span>
+          </div>
+        </div>
+
+        <div class="hero-stats">
+          <div class="hero-stat">
+            <strong class="counter" data-target="1200" data-suffix="+">0</strong>
+            <span>Lieux référencés</span>
+          </div>
+          <div class="hero-stat">
+            <strong class="counter" data-target="8400" data-suffix="+">0</strong>
+            <span>Événements organisés</span>
+          </div>
+          <div class="hero-stat">
+            <strong>4.8<small style="font-size:1rem">/5</small></strong>
+            <span>Note moyenne</span>
+          </div>
+        </div>
+      </div>
+
+      <div class="hero-visual">
+        <div class="hero-visual-inner">
+          <div class="hero-float-badge">
+            <span class="float-badge-num">98%</span>
+            satisfaction
+          </div>
+          <div class="hero-main-img">
+            <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" alt="Salle événementielle lumineuse" loading="eager" width="360" height="280" />
+          </div>
+          <div class="hero-float-card">
+            <div class="float-card-top">
+              <div class="float-card-avatar">M</div>
+              <div>
+                <div class="float-card-name">Marie L.</div>
+                <div class="float-card-stars">★★★★★</div>
+              </div>
+            </div>
+            <p class="float-card-text">« Lieu sublime, réservation en 3 minutes ! »</p>
+          </div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- STATS BAR -->
+  <div class="stats-bar">
+    <div class="stats-bar-inner">
+      <div class="stat-item reveal">
+        <strong class="counter" data-target="1200" data-suffix="+">0</strong>
+        <span>Lieux référencés</span>
+      </div>
+      <div class="stat-item reveal reveal-delay-1">
+        <strong class="counter" data-target="8400" data-suffix="+">0</strong>
+        <span>Événements organisés</span>
+      </div>
+      <div class="stat-item reveal reveal-delay-2">
+        <strong class="counter" data-target="98" data-suffix="%">0</strong>
+        <span>Satisfaction client</span>
+      </div>
+      <div class="stat-item reveal reveal-delay-3">
+        <strong class="counter" data-target="48" data-prefix="4." data-suffix="/5">0</strong>
+        <span>Note moyenne</span>
       </div>
     </div>
-    <div class="hero-img">
-      <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" alt="Salle événementielle" loading="lazy" />
-    </div>
-  </section>
+  </div>
 
-  <!-- STATS -->
-  <section class="stats">
-    <div class="stat"><strong>1 200+</strong><span>Lieux référencés</span></div>
-    <div class="stat"><strong>8 400+</strong><span>Événements organisés</span></div>
-    <div class="stat"><strong>4.8/5</strong><span>Note moyenne</span></div>
-    <div class="stat"><strong>98%</strong><span>Satisfaction client</span></div>
+  <!-- CATEGORIES -->
+  <section class="categories reveal">
+    <div class="categories-inner">
+      <p class="section-label">Explorer par type</p>
+      <h2>Quel type d'espace cherchez-vous ?</h2>
+      <p class="categories-sub">Des dizaines de catégories pour chaque occasion</p>
+      <div class="categories-grid">
+        <a href="search.html?type=salle" class="cat-card">
+          <span class="cat-icon">🏛️</span>
+          <span class="cat-name">Salle de réception</span>
+          <span class="cat-count">340 lieux</span>
+        </a>
+        <a href="search.html?type=rooftop" class="cat-card">
+          <span class="cat-icon">🌆</span>
+          <span class="cat-name">Rooftop</span>
+          <span class="cat-count">89 lieux</span>
+        </a>
+        <a href="search.html?type=jardin" class="cat-card">
+          <span class="cat-icon">🌿</span>
+          <span class="cat-name">Jardin / Parc</span>
+          <span class="cat-count">156 lieux</span>
+        </a>
+        <a href="search.html?type=loft" class="cat-card">
+          <span class="cat-icon">🏗️</span>
+          <span class="cat-name">Loft industriel</span>
+          <span class="cat-count">112 lieux</span>
+        </a>
+        <a href="search.html?type=chateau" class="cat-card">
+          <span class="cat-icon">🏰</span>
+          <span class="cat-name">Château / Manoir</span>
+          <span class="cat-count">64 lieux</span>
+        </a>
+        <a href="search.html?type=plage" class="cat-card">
+          <span class="cat-icon">🏖️</span>
+          <span class="cat-name">Plage / Mer</span>
+          <span class="cat-count">78 lieux</span>
+        </a>
+        <a href="search.html?type=studio" class="cat-card">
+          <span class="cat-icon">🎨</span>
+          <span class="cat-name">Studio / Galerie</span>
+          <span class="cat-count">203 lieux</span>
+        </a>
+        <a href="search.html?type=cave" class="cat-card">
+          <span class="cat-icon">🍷</span>
+          <span class="cat-name">Cave / Chai</span>
+          <span class="cat-count">47 lieux</span>
+        </a>
+      </div>
+    </div>
   </section>
 
   <!-- HOW IT WORKS -->
-  <section class="how" id="how">
-    <h2>Comment ça marche ?</h2>
-    <div class="how-grid">
-      <div class="how-card">
-        <div class="how-icon">🔍</div>
-        <h3>1. Cherchez</h3>
-        <p>Filtrez par ville, capacité, type d'espace et budget pour trouver le lieu idéal.</p>
+  <section class="hiw" id="hiw">
+    <div class="hiw-inner">
+      <p class="section-label">Simple & rapide</p>
+      <h2>Comment ça marche ?</h2>
+      <div class="hiw-tabs">
+        <button class="hiw-tab active" onclick="switchHiwTab(this,'particulier')">Je cherche un lieu</button>
+        <button class="hiw-tab" onclick="switchHiwTab(this,'annonceur')">Je loue mon lieu</button>
       </div>
-      <div class="how-card">
-        <div class="how-icon">📅</div>
-        <h3>2. Réservez</h3>
-        <p>Choisissez vos dates, envoyez une demande et obtenez une confirmation rapide.</p>
+
+      <div class="hiw-panel active reveal" id="panel-particulier">
+        <div class="hiw-step" data-step="01">
+          <div class="hiw-step-icon">🔍</div>
+          <h3>Cherchez</h3>
+          <p>Filtrez par ville, capacité, type d'espace et budget pour trouver le lieu idéal parmi 1 200+ adresses.</p>
+        </div>
+        <div class="hiw-step reveal reveal-delay-1" data-step="02">
+          <div class="hiw-step-icon">📅</div>
+          <h3>Réservez</h3>
+          <p>Choisissez vos dates, envoyez une demande et obtenez une confirmation en moins de 24h.</p>
+        </div>
+        <div class="hiw-step reveal reveal-delay-2" data-step="03">
+          <div class="hiw-step-icon">🎉</div>
+          <h3>Profitez</h3>
+          <p>Vivez votre événement en toute sérénité, couvert par nos garanties annulationto et support 7j/7.</p>
+        </div>
       </div>
-      <div class="how-card">
-        <div class="how-icon">🎉</div>
-        <h3>3. Profitez</h3>
-        <p>Vivez votre événement en toute sérénité, couvert par nos garanties.</p>
+
+      <div class="hiw-panel" id="panel-annonceur">
+        <div class="hiw-step" data-step="01">
+          <div class="hiw-step-icon">📸</div>
+          <h3>Publiez</h3>
+          <p>Créez votre annonce en 10 minutes : photos, description, équipements disponibles et tarification.</p>
+        </div>
+        <div class="hiw-step" data-step="02">
+          <div class="hiw-step-icon">📩</div>
+          <h3>Recevez des demandes</h3>
+          <p>Les organisateurs vous contactent directement. Gérez vos disponibilités depuis votre tableau de bord.</p>
+        </div>
+        <div class="hiw-step" data-step="03">
+          <div class="hiw-step-icon">💶</div>
+          <h3>Encaissez</h3>
+          <p>Paiements sécurisés et virements rapides. Gagnez jusqu'à 3 000€/mois avec votre espace.</p>
+        </div>
       </div>
     </div>
   </section>
 
   <!-- FEATURED VENUES -->
-  <section class="featured">
-    <h2>Lieux à la une</h2>
-    <div class="venues-grid" id="featuredVenues"></div>
-    <a href="search.html" class="btn btn-outline">Voir tous les lieux</a>
+  <section class="featured-section">
+    <div class="featured-inner">
+      <div class="featured-head">
+        <div>
+          <p class="section-label">Sélection du moment</p>
+          <h2>Lieux à la une</h2>
+        </div>
+        <a href="search.html" class="btn btn-outline">Voir tous les lieux →</a>
+      </div>
+      <div class="venue-tabs">
+        <button class="venue-tab active" onclick="filterVenues(this,'')">Tous</button>
+        <button class="venue-tab" onclick="filterVenues(this,'Salle')">Salles</button>
+        <button class="venue-tab" onclick="filterVenues(this,'Rooftop')">Rooftops</button>
+        <button class="venue-tab" onclick="filterVenues(this,'Loft')">Lofts</button>
+        <button class="venue-tab" onclick="filterVenues(this,'Jardin')">Jardins</button>
+      </div>
+      <div class="venues-grid" id="featuredVenues"></div>
+    </div>
+  </section>
+
+  <!-- TESTIMONIALS -->
+  <section class="testimonials" id="testimonials">
+    <div class="testimonials-inner">
+      <p class="section-label">Ce qu'ils disent</p>
+      <h2>Des milliers d'événements réussis</h2>
+      <div class="testimonials-track">
+        <div class="testi-card reveal">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">EventSpace m'a permis de trouver la salle de mariage de mes rêves en moins d'une heure. La réservation était fluide et l'annonceur très réactif. Je recommande à 1000%.</p>
+          <div class="testi-footer">
+            <div class="testi-avatar">S</div>
+            <div class="testi-info">
+              <div class="testi-stars">★★★★★</div>
+              <strong>Sophie M.</strong>
+              <span>Mariage à Bordeaux</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal reveal-delay-1">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">Nous organisons des séminaires régulièrement. EventSpace est devenu notre outil indispensable. Gain de temps considérable et lieux toujours de qualité professionnelle.</p>
+          <div class="testi-footer">
+            <div class="testi-avatar" style="background:linear-gradient(135deg,#6a9fd8,#4a7fbf)">T</div>
+            <div class="testi-info">
+              <div class="testi-stars">★★★★★</div>
+              <strong>Thomas B.</strong>
+              <span>Directeur RH, Paris</span>
+            </div>
+          </div>
+        </div>
+        <div class="testi-card reveal reveal-delay-2">
+          <span class="testi-quote">"</span>
+          <p class="testi-text">J'ai mis mon loft en location sur EventSpace il y a 6 mois. Résultat : +2 800€ de revenus supplémentaires par mois. La plateforme est vraiment bien pensée pour les annonceurs.</p>
+          <div class="testi-footer">
+            <div class="testi-avatar" style="background:linear-gradient(135deg,#7bc67a,#4a9f49)">L</div>
+            <div class="testi-info">
+              <div class="testi-stars">★★★★★</div>
+              <strong>Laura V.</strong>
+              <span>Propriétaire, Lyon</span>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
   </section>
 
   <!-- CTA ANNONCEUR -->
-  <section class="cta-annonceur">
-    <div class="cta-inner">
-      <h2>Vous avez un lieu à louer ?</h2>
-      <p>Rejoignez EventSpace et mettez votre espace en avant auprès de milliers de particuliers.</p>
-      <a href="register.html?role=annonceur" class="btn btn-white">Devenir annonceur</a>
+  <section class="cta-annonceur-section">
+    <div class="cta-annonceur-inner reveal">
+      <div class="cta-text">
+        <p class="section-label">Pour les propriétaires</p>
+        <h2>Vous avez un lieu à louer ?</h2>
+        <p>Rejoignez EventSpace et mettez votre espace en avant auprès de milliers d'organisateurs d'événements partout en France.</p>
+        <div class="cta-benefits">
+          <div class="cta-benefit"><span class="cta-benefit-icon">✓</span> Publication gratuite et sans commission cachée</div>
+          <div class="cta-benefit"><span class="cta-benefit-icon">✓</span> Gestion simplifiée des disponibilités et réservations</div>
+          <div class="cta-benefit"><span class="cta-benefit-icon">✓</span> Paiements sécurisés et virements en 48h</div>
+          <div class="cta-benefit"><span class="cta-benefit-icon">✓</span> Support dédié 7j/7</div>
+        </div>
+      </div>
+      <div class="cta-actions">
+        <a href="register.html?role=annonceur" class="btn btn-primary btn-lg">Devenir annonceur →</a>
+        <a href="#hiw" class="btn btn-outline-light">En savoir plus</a>
+      </div>
     </div>
   </section>
 
   <!-- FOOTER -->
-  <footer>
-    <div class="footer-inner">
-      <div class="footer-brand">
-        <a class="logo" href="index.html">Event<span>Space</span></a>
-        <p>La plateforme de mise en relation entre propriétaires de lieux et organisateurs d'événements.</p>
+  <footer class="footer">
+    <div class="container">
+      <div class="footer-grid">
+        <div class="footer-brand">
+          <a class="nav-logo" href="index.html" style="font-size:1.1rem;display:inline-flex;align-items:center;gap:6px">
+            <svg width="24" height="24" viewBox="0 0 28 28" fill="none"><rect x="2" y="2" width="24" height="24" rx="6" fill="none" stroke="#c8a96e" stroke-width="1.5"/><path d="M8 20 L14 8 L20 20" stroke="#c8a96e" stroke-width="1.8" stroke-linecap="round" stroke-linejoin="round" fill="none"/><path d="M10 16 L18 16" stroke="#c8a96e" stroke-width="1.5" stroke-linecap="round"/></svg>
+            Event<span style="color:var(--primary)">Space</span>
+          </a>
+          <p>La plateforme de mise en relation entre propriétaires de lieux événementiels et organisateurs d'événements.</p>
+        </div>
+        <div class="footer-links">
+          <h4>Plateforme</h4>
+          <a href="search.html">Chercher un lieu</a>
+          <a href="register.html?role=annonceur">Proposer mon lieu</a>
+          <a href="#hiw">Comment ça marche</a>
+        </div>
+        <div class="footer-links">
+          <h4>Légal</h4>
+          <a href="legal/cgu.html">CGU</a>
+          <a href="legal/cgv.html">CGV</a>
+          <a href="legal/privacy.html">Confidentialité</a>
+          <a href="legal/mentions.html">Mentions légales</a>
+        </div>
+        <div class="footer-links">
+          <h4>Support</h4>
+          <a href="mailto:contact@eventspace.fr">contact@eventspace.fr</a>
+          <a href="#">FAQ</a>
+          <a href="#">Centre d'aide</a>
+        </div>
       </div>
-      <div class="footer-col">
-        <h4>Plateforme</h4>
-        <a href="search.html">Chercher un lieu</a>
-        <a href="register.html?role=annonceur">Proposer mon lieu</a>
-        <a href="#how">Comment ça marche</a>
+      <div class="footer-bottom">
+        <p>&copy; 2026 EventSpace SAS – Tous droits réservés – RCS Paris 123 456 789</p>
       </div>
-      <div class="footer-col">
-        <h4>Légal</h4>
-        <a href="legal/cgu.html">CGU</a>
-        <a href="legal/cgv.html">CGV</a>
-        <a href="legal/privacy.html">Politique de confidentialité</a>
-        <a href="legal/mentions.html">Mentions légales</a>
-        <a href="legal/cookies.html">Gestion des cookies</a>
-      </div>
-      <div class="footer-col">
-        <h4>Support</h4>
-        <a href="mailto:contact@eventspace.fr">contact@eventspace.fr</a>
-        <a href="#">FAQ</a>
-        <a href="#">Centre d'aide</a>
-      </div>
-    </div>
-    <div class="footer-bottom">
-      <p>&copy; 2026 EventSpace SAS – Tous droits réservés – RCS Paris 123 456 789</p>
     </div>
   </footer>
 
   <script src="js/data.js"></script>
   <script src="js/app.js"></script>
+  <script>
+    // ===== NAVBAR SCROLL =====
+    window.addEventListener('scroll', () => {
+      document.getElementById('navbar').classList.toggle('scrolled', window.scrollY > 40);
+    });
+
+    // ===== BURGER MENU =====
+    document.getElementById('burger').addEventListener('click', () => {
+      document.getElementById('navLinks').classList.toggle('open');
+    });
+
+    // ===== CANVAS PARTICLES =====
+    (function() {
+      const canvas = document.getElementById('hero-canvas');
+      const ctx = canvas.getContext('2d');
+      let particles = [];
+      const count = 55;
+
+      function resize() {
+        canvas.width = canvas.offsetWidth;
+        canvas.height = canvas.offsetHeight;
+      }
+
+      class Particle {
+        constructor() { this.reset(); }
+        reset() {
+          this.x = Math.random() * canvas.width;
+          this.y = Math.random() * canvas.height;
+          this.r = Math.random() * 1.5 + 0.3;
+          this.vx = (Math.random() - 0.5) * 0.3;
+          this.vy = (Math.random() - 0.5) * 0.3;
+          this.alpha = Math.random() * 0.5 + 0.1;
+          this.color = Math.random() > 0.7 ? '#c8a96e' : '#ffffff';
+        }
+        update() {
+          this.x += this.vx; this.y += this.vy;
+          if (this.x < 0 || this.x > canvas.width || this.y < 0 || this.y > canvas.height) this.reset();
+        }
+        draw() {
+          ctx.beginPath();
+          ctx.arc(this.x, this.y, this.r, 0, Math.PI * 2);
+          ctx.fillStyle = this.color.replace(')', `,${this.alpha})`).replace('rgb', 'rgba').replace('#c8a96e', `rgba(200,169,110,${this.alpha})`).replace('#ffffff', `rgba(255,255,255,${this.alpha})`);
+          ctx.fill();
+        }
+      }
+
+      function init() {
+        resize();
+        particles = Array.from({length: count}, () => new Particle());
+      }
+
+      function drawConnections() {
+        for (let i = 0; i < particles.length; i++) {
+          for (let j = i + 1; j < particles.length; j++) {
+            const dx = particles[i].x - particles[j].x;
+            const dy = particles[i].y - particles[j].y;
+            const dist = Math.sqrt(dx * dx + dy * dy);
+            if (dist < 100) {
+              ctx.beginPath();
+              ctx.strokeStyle = `rgba(200,169,110,${0.06 * (1 - dist / 100)})`;
+              ctx.lineWidth = 0.5;
+              ctx.moveTo(particles[i].x, particles[i].y);
+              ctx.lineTo(particles[j].x, particles[j].y);
+              ctx.stroke();
+            }
+          }
+        }
+      }
+
+      function animate() {
+        ctx.clearRect(0, 0, canvas.width, canvas.height);
+        particles.forEach(p => { p.update(); p.draw(); });
+        drawConnections();
+        requestAnimationFrame(animate);
+      }
+
+      window.addEventListener('resize', () => { resize(); particles.forEach(p => p.reset()); });
+      init(); animate();
+    })();
+
+    // ===== ANIMATED COUNTERS =====
+    function animateCounter(el) {
+      const target = parseInt(el.dataset.target);
+      const prefix = el.dataset.prefix || '';
+      const suffix = el.dataset.suffix || '';
+      const duration = 1800;
+      const start = performance.now();
+      function tick(now) {
+        const progress = Math.min((now - start) / duration, 1);
+        const eased = 1 - Math.pow(1 - progress, 3);
+        el.textContent = prefix + Math.floor(eased * target).toLocaleString('fr-FR') + suffix;
+        if (progress < 1) requestAnimationFrame(tick);
+      }
+      requestAnimationFrame(tick);
+    }
+
+    // ===== SCROLL REVEAL + COUNTER TRIGGER =====
+    const revealObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          entry.target.classList.add('visible');
+          revealObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.15 });
+
+    const counterObserver = new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        if (entry.isIntersecting) {
+          animateCounter(entry.target);
+          counterObserver.unobserve(entry.target);
+        }
+      });
+    }, { threshold: 0.5 });
+
+    document.querySelectorAll('.reveal').forEach(el => revealObserver.observe(el));
+    document.querySelectorAll('.counter').forEach(el => counterObserver.observe(el));
+
+    // ===== HIW TABS =====
+    function switchHiwTab(btn, panel) {
+      document.querySelectorAll('.hiw-tab').forEach(b => b.classList.remove('active'));
+      document.querySelectorAll('.hiw-panel').forEach(p => p.classList.remove('active'));
+      btn.classList.add('active');
+      document.getElementById('panel-' + panel).classList.add('active');
+    }
+
+    // ===== HERO SEARCH =====
+    function heroSearch() {
+      const city = document.getElementById('heroCity').value;
+      const type = document.getElementById('heroType').value;
+      let url = 'search.html';
+      const params = [];
+      if (city) params.push('city=' + encodeURIComponent(city));
+      if (type) params.push('type=' + encodeURIComponent(type));
+      if (params.length) url += '?' + params.join('&');
+      window.location.href = url;
+    }
+    function setHeroSearch(type) {
+      document.getElementById('heroType').value = type;
+      document.getElementById('heroCity').focus();
+    }
+    document.getElementById('heroCity').addEventListener('keydown', e => {
+      if (e.key === 'Enter') heroSearch();
+    });
+
+    // ===== VENUE FILTER TABS =====
+    function filterVenues(btn, type) {
+      document.querySelectorAll('.venue-tab').forEach(b => b.classList.remove('active'));
+      btn.classList.add('active');
+      renderFeaturedVenues(type);
+    }
+
+    function renderFeaturedVenues(filterType = '') {
+      const container = document.getElementById('featuredVenues');
+      if (!container) return;
+      const data = window.VENUES || [];
+      const filtered = filterType ? data.filter(v => v.type && v.type.toLowerCase().includes(filterType.toLowerCase())) : data.slice(0, 6);
+      const toShow = filtered.slice(0, 6);
+
+      if (toShow.length === 0) {
+        container.innerHTML = '<div class="empty-state" style="grid-column:1/-1"><div class="empty-icon">🔍</div><h3>Aucun lieu dans cette catégorie</h3><p>Explorez toutes nos catégories</p><a href="search.html" class="btn btn-primary">Voir tous les lieux</a></div>';
+        return;
+      }
+
+      container.innerHTML = toShow.map(v => `
+        <div class="venue-card" onclick="window.location='venue.html?id=${v.id}'" style="cursor:pointer">
+          <div class="venue-thumb" style="background:var(--bg-3)">
+            ${v.image ? `<img src="${v.image}" alt="${v.name}" style="width:100%;height:100%;object-fit:cover" loading="lazy"/>` : `<span style="font-size:3rem">${v.emoji||'🏛️'}</span>`}
+            <span class="venue-tag">${v.type || 'Lieu'}</span>
+          </div>
+          <div class="venue-body">
+            <h3>${v.name}</h3>
+            <p class="venue-loc">📍 ${v.city || v.location || 'France'}</p>
+            <div class="venue-meta">
+              <span class="venue-price">${v.price ? v.price + '€/jour' : 'Sur demande'}</span>
+              <span class="venue-cap">👥 ${v.capacity || '?'} pers. max</span>
+            </div>
+          </div>
+          <div class="venue-actions">
+            <a href="venue.html?id=${v.id}" class="btn btn-outline" style="flex:1;justify-content:center">Voir le lieu</a>
+          </div>
+        </div>
+      `).join('');
+    }
+
+    document.addEventListener('DOMContentLoaded', () => {
+      renderFeaturedVenues();
+    });
+  </script>
 </body>
 </html>
