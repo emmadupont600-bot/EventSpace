@@ -1,0 +1,111 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSpace – Mon espace</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">Event<span>Space</span></a>
+      <div class="nav-links">
+        <a href="search.html">Chercher un lieu</a>
+        <a href="dashboard-particulier.html" class="active">Mon espace</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user" id="navUserName"></span>
+        <button class="btn btn-ghost" onclick="logout()">Déconnexion</button>
+        <button class="burger" id="burger">&#9776;</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <aside class="dash-sidebar">
+      <div class="dash-avatar" id="dashAvatar"></div>
+      <nav class="dash-nav">
+        <a href="#reservations" class="dash-link active" data-section="reservations">📅 Mes réservations</a>
+        <a href="#favoris" class="dash-link" data-section="favoris">❤️ Mes favoris</a>
+        <a href="#messages" class="dash-link" data-section="messages">💬 Messages</a>
+        <a href="#profil" class="dash-link" data-section="profil">👤 Mon profil</a>
+        <a href="#securite" class="dash-link" data-section="securite">🔒 Sécurité</a>
+        <a href="#rgpd" class="dash-link" data-section="rgpd">📋 Mes données (RGPD)</a>
+      </nav>
+    </aside>
+
+    <main class="dash-content">
+      <!-- RESERVATIONS -->
+      <section id="reservations" class="dash-section active">
+        <h2>Mes réservations</h2>
+        <div id="reservationsList"></div>
+        <a href="search.html" class="btn btn-primary">+ Nouvelle réservation</a>
+      </section>
+
+      <!-- FAVORIS -->
+      <section id="favoris" class="dash-section">
+        <h2>Mes lieux favoris</h2>
+        <div class="venues-grid" id="favorisList"></div>
+      </section>
+
+      <!-- MESSAGES -->
+      <section id="messages" class="dash-section">
+        <h2>Messages</h2>
+        <div class="messages-list" id="messagesList"></div>
+      </section>
+
+      <!-- PROFIL -->
+      <section id="profil" class="dash-section">
+        <h2>Mon profil</h2>
+        <form onsubmit="saveProfile(event)">
+          <div class="form-row">
+            <label>Prénom <input type="text" id="profileFirst" /></label>
+            <label>Nom <input type="text" id="profileLast" /></label>
+          </div>
+          <label>Email <input type="email" id="profileEmail" /></label>
+          <label>Téléphone <input type="tel" id="profilePhone" /></label>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </form>
+      </section>
+
+      <!-- SECURITE -->
+      <section id="securite" class="dash-section">
+        <h2>Sécurité</h2>
+        <form onsubmit="changePassword(event)">
+          <label>Mot de passe actuel <input type="password" id="curPass" /></label>
+          <label>Nouveau mot de passe <input type="password" id="newPass" minlength="8" /></label>
+          <label>Confirmer <input type="password" id="confirmPass" /></label>
+          <button type="submit" class="btn btn-primary">Mettre à jour</button>
+          <p id="passMsg" class="form-success"></p>
+        </form>
+        <hr/>
+        <h3>Double authentification</h3>
+        <p>Renforcez la sécurité de votre compte avec la 2FA (fonctionnalité disponible prochainement).</p>
+      </section>
+
+      <!-- RGPD -->
+      <section id="rgpd" class="dash-section">
+        <h2>Mes données personnelles (RGPD)</h2>
+        <p>Conformément au <strong>Règlement Général sur la Protection des Données (RGPD – UE 2016/679)</strong>, vous disposez des droits suivants :</p>
+        <ul class="rgpd-list">
+          <li>✅ <strong>Droit d'accès</strong> – Téléchargez l'intégralité de vos données</li>
+          <li>✏️ <strong>Droit de rectification</strong> – Modifiez vos informations dans l'onglet Profil</li>
+          <li>🗑️ <strong>Droit à l'effacement</strong> – Demandez la suppression de votre compte</li>
+          <li>📤 <strong>Droit à la portabilité</strong> – Exportez vos données en JSON/CSV</li>
+          <li>🚫 <strong>Droit d'opposition</strong> – Opposez-vous au traitement à des fins marketing</li>
+        </ul>
+        <div class="rgpd-actions">
+          <button class="btn btn-outline" onclick="exportData()">📥 Exporter mes données (JSON)</button>
+          <button class="btn btn-danger" onclick="requestDeletion()">🗑️ Supprimer mon compte</button>
+        </div>
+        <p class="legal-note">Pour toute demande relative à vos droits, contactez notre DPO : <a href="mailto:dpo@eventspace.fr">dpo@eventspace.fr</a> — Réponse sous 30 jours maximum.</p>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/dashboard-particulier.js"></script>
+</body>
+</html>

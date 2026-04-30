@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSpace – Espace Annonceur</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">Event<span>Space</span></a>
+      <div class="nav-links">
+        <a href="dashboard-annonceur.html" class="active">Tableau de bord</a>
+      </div>
+      <div class="nav-actions">
+        <span class="nav-user" id="navUserName"></span>
+        <span class="badge-annonceur">Annonceur</span>
+        <button class="btn btn-ghost" onclick="logout()">Déconnexion</button>
+        <button class="burger" id="burger">&#9776;</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="dashboard">
+    <aside class="dash-sidebar">
+      <div class="dash-avatar" id="dashAvatar"></div>
+      <nav class="dash-nav">
+        <a href="#overview" class="dash-link active" data-section="overview">📊 Vue d'ensemble</a>
+        <a href="#mes-lieux" class="dash-link" data-section="mes-lieux">🏠 Mes lieux</a>
+        <a href="#calendrier" class="dash-link" data-section="calendrier">📅 Calendrier</a>
+        <a href="#demandes" class="dash-link" data-section="demandes">📨 Demandes</a>
+        <a href="#avis" class="dash-link" data-section="avis">⭐ Avis</a>
+        <a href="#finances" class="dash-link" data-section="finances">💰 Finances</a>
+        <a href="#profil-ann" class="dash-link" data-section="profil-ann">👤 Profil</a>
+        <a href="#legal-ann" class="dash-link" data-section="legal-ann">📋 Légal & RGPD</a>
+      </nav>
+    </aside>
+
+    <main class="dash-content">
+      <!-- OVERVIEW -->
+      <section id="overview" class="dash-section active">
+        <h2>Vue d'ensemble</h2>
+        <div class="kpi-grid">
+          <div class="kpi"><strong id="kpiViews">0</strong><span>Vues ce mois</span></div>
+          <div class="kpi"><strong id="kpiBookings">0</strong><span>Réservations</span></div>
+          <div class="kpi"><strong id="kpiRevenue">0 €</strong><span>Revenus</span></div>
+          <div class="kpi"><strong id="kpiRating">—</strong><span>Note moyenne</span></div>
+        </div>
+        <div id="overviewDemandes"></div>
+      </section>
+
+      <!-- MES LIEUX -->
+      <section id="mes-lieux" class="dash-section">
+        <div class="section-header">
+          <h2>Mes lieux</h2>
+          <button class="btn btn-primary" onclick="openAddVenue()">+ Ajouter un lieu</button>
+        </div>
+        <div class="venues-grid" id="annVenuesList"></div>
+
+        <!-- MODAL AJOUT LIEU -->
+        <div class="modal-overlay" id="addVenueModal">
+          <div class="modal">
+            <h3>Ajouter / Modifier un lieu</h3>
+            <button class="modal-close" onclick="closeAddVenue()">✕</button>
+            <form id="venueForm" onsubmit="saveVenue(event)">
+              <label>Nom du lieu <input type="text" id="vName" required /></label>
+              <label>Adresse <input type="text" id="vAddress" required /></label>
+              <label>Description <textarea id="vDesc" rows="3" required></textarea></label>
+              <div class="form-row">
+                <label>Prix €/h <input type="number" id="vPrice" required min="1" /></label>
+                <label>Capacité max <input type="number" id="vCap" required min="1" /></label>
+              </div>
+              <label>Type
+                <select id="vType">
+                  <option>Salle de réception</option>
+                  <option>Jardin / Espace extérieur</option>
+                  <option>Rooftop</option>
+                  <option>Loft / Studio</option>
+                  <option>Château / Manoir</option>
+                  <option>Salle de réunion</option>
+                  <option>Autre</option>
+                </select>
+              </label>
+              <label>Équipements (séparés par virgule)
+                <input type="text" id="vAmenities" placeholder="Sono, Climatisation, Parking…" />
+              </label>
+              <label>URL Image principale
+                <input type="url" id="vImg" placeholder="https://…" />
+              </label>
+              <label class="checkbox"><input type="checkbox" id="vPublished" checked /> Publier immédiatement</label>
+              <button type="submit" class="btn btn-primary full">Enregistrer</button>
+            </form>
+          </div>
+        </div>
+      </section>
+
+      <!-- CALENDRIER -->
+      <section id="calendrier" class="dash-section">
+        <h2>Calendrier des disponibilités</h2>
+        <div class="calendar-nav">
+          <button onclick="prevMonth()">◀</button>
+          <h3 id="calTitle"></h3>
+          <button onclick="nextMonth()">▶</button>
+        </div>
+        <div class="calendar" id="calGrid"></div>
+        <p class="cal-legend"><span class="cal-available"></span> Disponible &nbsp; <span class="cal-booked"></span> Réservé &nbsp; <span class="cal-blocked"></span> Bloqué</p>
+      </section>
+
+      <!-- DEMANDES -->
+      <section id="demandes" class="dash-section">
+        <h2>Demandes de réservation</h2>
+        <div id="demandesList"></div>
+      </section>
+
+      <!-- AVIS -->
+      <section id="avis" class="dash-section">
+        <h2>Avis clients</h2>
+        <div id="avisList"></div>
+      </section>
+
+      <!-- FINANCES -->
+      <section id="finances" class="dash-section">
+        <h2>Finances</h2>
+        <div class="kpi-grid">
+          <div class="kpi"><strong id="finTotal">0 €</strong><span>Total encaissé</span></div>
+          <div class="kpi"><strong id="finPending">0 €</strong><span>En attente</span></div>
+          <div class="kpi"><strong id="finCommission">0 €</strong><span>Commission EventSpace (8%)</span></div>
+        </div>
+        <p class="legal-note">Conformément à la réglementation fiscale française, un récapitulatif annuel de vos revenus vous sera adressé avant le 31 janvier de chaque année. TVA applicable selon votre statut (art. 293B CGI si micro-entreprise).</p>
+        <button class="btn btn-outline" onclick="downloadInvoices()">📥 Télécharger les factures</button>
+      </section>
+
+      <!-- PROFIL ANNONCEUR -->
+      <section id="profil-ann" class="dash-section">
+        <h2>Profil annonceur</h2>
+        <form onsubmit="saveAnnProfile(event)">
+          <div class="form-row">
+            <label>Prénom <input type="text" id="annFirst" /></label>
+            <label>Nom <input type="text" id="annLast" /></label>
+          </div>
+          <label>Email <input type="email" id="annEmail" /></label>
+          <label>Téléphone <input type="tel" id="annPhone" /></label>
+          <label>SIRET <input type="text" id="annSiret" maxlength="17" /></label>
+          <label>RIB / IBAN (pour les versements)
+            <input type="text" id="annIban" placeholder="FR76…" />
+          </label>
+          <button type="submit" class="btn btn-primary">Enregistrer</button>
+        </form>
+      </section>
+
+      <!-- LEGAL RGPD ANNONCEUR -->
+      <section id="legal-ann" class="dash-section">
+        <h2>Légal & RGPD</h2>
+        <div class="legal-block">
+          <h3>Responsabilités de l'annonceur</h3>
+          <ul>
+            <li>Vous certifiez être propriétaire ou mandataire autorisé du lieu déclaré.</li>
+            <li>Les informations publiées doivent être exactes, complètes et à jour.</li>
+            <li>Vous êtes responsable du respect des réglementations locales (ERP, incendie, capacité).</li>
+            <li>Toute annulation tardive (moins de 48h) est soumise aux pénalités définies dans les CGV.</li>
+          </ul>
+        </div>
+        <div class="legal-block">
+          <h3>Traitement des données (RGPD)</h3>
+          <p>En tant que responsable de traitement conjoint, vous vous engagez à traiter les données des réservataires uniquement dans le cadre de la prestation et à ne pas les céder à des tiers. Base légale : exécution du contrat (art. 6.1.b RGPD).</p>
+        </div>
+        <div class="rgpd-actions">
+          <button class="btn btn-outline" onclick="exportAnnData()">📥 Exporter mes données</button>
+          <button class="btn btn-danger" onclick="requestAnnDeletion()">🗑️ Supprimer mon compte annonceur</button>
+        </div>
+      </section>
+    </main>
+  </div>
+
+  <script src="js/data.js"></script>
+  <script src="js/dashboard-annonceur.js"></script>
+</body>
+</html>

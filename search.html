@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSpace – Rechercher un lieu</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">Event<span>Space</span></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html">Accueil</a>
+        <a href="search.html" class="active">Chercher un lieu</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-ghost" id="navLoginBtn">Connexion</a>
+        <a href="register.html" class="btn btn-primary" id="navRegisterBtn">S'inscrire</a>
+        <button class="burger" id="burger" aria-label="menu">&#9776;</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="search-page">
+    <!-- FILTERS -->
+    <aside class="filters" id="filtersPanel">
+      <h3>Filtres</h3>
+      <button class="filters-close" id="filtersClose">✕</button>
+      <label>Ville / Code postal
+        <input type="text" id="fCity" placeholder="Paris, Lyon…" />
+      </label>
+      <label>Type d'événement
+        <select id="fType">
+          <option value="">Tous</option>
+          <option>Anniversaire</option>
+          <option>Mariage</option>
+          <option>Séminaire</option>
+          <option>Soirée privée</option>
+          <option>Shooting photo</option>
+          <option>Autre</option>
+        </select>
+      </label>
+      <label>Capacité min.
+        <input type="number" id="fCap" placeholder="20" min="1" />
+      </label>
+      <label>Budget max. (€/h)
+        <input type="range" id="fBudget" min="10" max="1000" value="1000" step="10" />
+        <span id="fBudgetVal">1000 €/h</span>
+      </label>
+      <label>Note minimale
+        <select id="fRating">
+          <option value="0">Toutes</option>
+          <option value="4">4+ ⭐</option>
+          <option value="4.5">4.5+ ⭐</option>
+        </select>
+      </label>
+      <button class="btn btn-primary" onclick="applyFilters()">Appliquer</button>
+      <button class="btn btn-ghost" onclick="resetFilters()">Réinitialiser</button>
+    </aside>
+
+    <!-- RESULTS -->
+    <main class="results">
+      <div class="results-header">
+        <h2>Lieux disponibles <span id="resultCount"></span></h2>
+        <button class="btn btn-ghost" id="filtersToggle">⚙ Filtres</button>
+        <select id="sortBy" onchange="applyFilters()">
+          <option value="rating">Mieux notés</option>
+          <option value="price_asc">Prix croissant</option>
+          <option value="price_desc">Prix décroissant</option>
+        </select>
+      </div>
+      <div class="venues-grid" id="searchResults"></div>
+    </main>
+  </div>
+
+  <footer class="footer-mini">
+    <p>&copy; 2026 EventSpace – <a href="legal/cgu.html">CGU</a> – <a href="legal/privacy.html">Confidentialité</a></p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/search.js"></script>
+</body>
+</html>

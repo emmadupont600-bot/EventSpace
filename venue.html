@@ -1,0 +1,88 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSpace – Détail du lieu</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+</head>
+<body>
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">Event<span>Space</span></a>
+      <div class="nav-links">
+        <a href="search.html">← Retour aux résultats</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-ghost" id="navLoginBtn">Connexion</a>
+        <button class="burger" id="burger">&#9776;</button>
+      </div>
+    </div>
+  </nav>
+
+  <div class="venue-page" id="venuePage">
+    <div class="venue-gallery" id="venueGallery"></div>
+    <div class="venue-body">
+      <div class="venue-main">
+        <div class="venue-header">
+          <h1 id="venueTitle"></h1>
+          <button class="fav-btn" id="favBtn" onclick="toggleFav()">♡ Favoris</button>
+        </div>
+        <div class="venue-meta" id="venueMeta"></div>
+        <div class="venue-desc" id="venueDesc"></div>
+        <div class="venue-amenities" id="venueAmenities"></div>
+        <div class="venue-reviews">
+          <h3>Avis clients</h3>
+          <div id="venueReviews"></div>
+        </div>
+      </div>
+      <aside class="venue-booking">
+        <div class="booking-card">
+          <p class="booking-price" id="bookingPrice"></p>
+          <form id="bookingForm" onsubmit="submitBooking(event)">
+            <label>Date de l'événement <input type="date" id="bookDate" required /></label>
+            <label>Heure de début <input type="time" id="bookStart" required /></label>
+            <label>Heure de fin <input type="time" id="bookEnd" required /></label>
+            <label>Nombre d'invités <input type="number" id="bookGuests" min="1" required /></label>
+            <label>Type d'événement
+              <select id="bookType">
+                <option>Anniversaire</option>
+                <option>Mariage</option>
+                <option>Séminaire</option>
+                <option>Soirée privée</option>
+                <option>Shooting photo</option>
+                <option>Autre</option>
+              </select>
+            </label>
+            <label>Message (facultatif)
+              <textarea id="bookMsg" rows="3" placeholder="Précisions sur votre événement…"></textarea>
+            </label>
+            <div class="booking-total" id="bookingTotal"></div>
+            <button type="submit" class="btn btn-primary full">Envoyer la demande</button>
+          </form>
+          <p class="booking-notice">Aucun débit immédiat. L'annonceur a 48h pour confirmer.</p>
+          <hr/>
+          <p class="legal-note">En soumettant ce formulaire, vous acceptez les <a href="legal/cgv.html">CGV</a> et la politique d'annulation.</p>
+        </div>
+      </aside>
+    </div>
+  </div>
+
+  <div class="modal-overlay" id="bookingSuccess" style="display:none">
+    <div class="modal modal-sm">
+      <div class="modal-icon">✅</div>
+      <h3>Demande envoyée !</h3>
+      <p>L'annonceur a été notifié. Vous recevrez une confirmation dans votre espace.</p>
+      <a href="dashboard-particulier.html" class="btn btn-primary">Voir mes réservations</a>
+    </div>
+  </div>
+
+  <footer class="footer-mini">
+    <p>&copy; 2026 EventSpace – <a href="legal/cgu.html">CGU</a> – <a href="legal/privacy.html">Confidentialité</a></p>
+  </footer>
+
+  <script src="js/data.js"></script>
+  <script src="js/venue.js"></script>
+</body>
+</html>

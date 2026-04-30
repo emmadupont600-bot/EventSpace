@@ -1,211 +1,136 @@
 <!DOCTYPE html>
 <html lang="fr">
 <head>
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>EventSpace — Trouvez l'espace parfait</title>
-  <link rel="stylesheet" href="styles.css">
-  <link rel="preconnect" href="https://fonts.googleapis.com">
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>EventSpace – Trouvez le lieu parfait</title>
+  <link rel="stylesheet" href="css/style.css" />
+  <link rel="preconnect" href="https://fonts.googleapis.com" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
 </head>
 <body>
+  <!-- NAV -->
+  <nav id="navbar">
+    <div class="nav-inner">
+      <a class="logo" href="index.html">Event<span>Space</span></a>
+      <div class="nav-links" id="navLinks">
+        <a href="index.html" class="active">Accueil</a>
+        <a href="search.html">Chercher un lieu</a>
+        <a href="#how">Comment ça marche</a>
+      </div>
+      <div class="nav-actions">
+        <a href="login.html" class="btn btn-ghost">Connexion</a>
+        <a href="register.html" class="btn btn-primary">S'inscrire</a>
+        <button class="burger" id="burger" aria-label="menu">&#9776;</button>
+      </div>
+    </div>
+  </nav>
 
-<!-- NAVBAR -->
-<nav class="navbar" id="navbar">
-  <div class="nav-container">
-    <a href="index.html" class="nav-logo">Event<span>Space</span></a>
-    <div class="nav-links" id="navLinks">
-      <a href="#how-it-works">Comment ça marche</a>
-      <a href="#features">Fonctionnalités</a>
-      <a href="legal.html">Mentions légales</a>
+  <!-- HERO -->
+  <section class="hero">
+    <div class="hero-content">
+      <span class="badge">Nouvelle plateforme</span>
+      <h1>Le lieu parfait pour<br/><em>chaque événement</em></h1>
+      <p>Salles, jardins, rooftops, lofts… Réservez en quelques clics auprès d'annonceurs vérifiés.</p>
+      <div class="hero-search">
+        <input type="text" placeholder="Ville, code postal…" id="heroCity" />
+        <select id="heroType">
+          <option value="">Type d'événement</option>
+          <option>Anniversaire</option>
+          <option>Mariage</option>
+          <option>Séminaire</option>
+          <option>Soirée privée</option>
+          <option>Shooting photo</option>
+          <option>Autre</option>
+        </select>
+        <button class="btn btn-primary" onclick="heroSearch()">Rechercher</button>
+      </div>
     </div>
-    <div class="nav-actions">
-      <a href="login.html" class="btn btn-ghost">Se connecter</a>
-      <a href="register.html" class="btn btn-primary">Créer un compte</a>
+    <div class="hero-img">
+      <img src="https://images.unsplash.com/photo-1519167758481-83f550bb49b3?w=800&q=80" alt="Salle événementielle" loading="lazy" />
     </div>
-    <button class="hamburger" id="hamburger" aria-label="Menu">
-      <span></span><span></span><span></span>
-    </button>
-  </div>
-</nav>
+  </section>
 
-<!-- HERO -->
-<section class="hero">
-  <div class="hero-content">
-    <span class="badge">Plateforme N°1 de location d'espaces</span>
-    <h1>L'espace parfait pour <br><span class="gradient-text">chaque événement</span></h1>
-    <p class="hero-sub">Mariages, séminaires, anniversaires, shooting photo... Trouvez ou proposez des lieux uniques en quelques clics.</p>
-    <div class="hero-cta">
-      <a href="register.html?type=particulier" class="btn btn-primary btn-lg">🔍 Trouver un espace</a>
-      <a href="register.html?type=annonceur" class="btn btn-outline btn-lg">🏛️ Proposer mon lieu</a>
-    </div>
-    <div class="hero-stats">
-      <div class="stat"><strong>1 200+</strong><span>Espaces référencés</span></div>
-      <div class="stat"><strong>8 400+</strong><span>Événements organisés</span></div>
-      <div class="stat"><strong>4.9/5</strong><span>Note moyenne</span></div>
-    </div>
-  </div>
-  <div class="hero-image">
-    <div class="hero-card">
-      <div class="card-img-placeholder">🏛️</div>
-      <div class="card-info">
-        <h3>Salle des Arts</h3>
-        <p>Paris 8ème • Jusqu'à 120 pers.</p>
-        <div class="card-meta">
-          <span class="availability available">● Disponible</span>
-          <strong>280 €/jour</strong>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
+  <!-- STATS -->
+  <section class="stats">
+    <div class="stat"><strong>1 200+</strong><span>Lieux référencés</span></div>
+    <div class="stat"><strong>8 400+</strong><span>Événements organisés</span></div>
+    <div class="stat"><strong>4.8/5</strong><span>Note moyenne</span></div>
+    <div class="stat"><strong>98%</strong><span>Satisfaction client</span></div>
+  </section>
 
-<!-- HOW IT WORKS -->
-<section class="section" id="how-it-works">
-  <div class="container">
-    <div class="section-header">
-      <span class="badge-section">Simple & rapide</span>
-      <h2>Comment ça marche ?</h2>
-    </div>
-    <div class="tabs-how">
-      <div class="tab-switcher">
-        <button class="tab-btn active" data-tab="particulier">Je cherche un lieu</button>
-        <button class="tab-btn" data-tab="annonceur">Je propose mon lieu</button>
+  <!-- HOW IT WORKS -->
+  <section class="how" id="how">
+    <h2>Comment ça marche ?</h2>
+    <div class="how-grid">
+      <div class="how-card">
+        <div class="how-icon">🔍</div>
+        <h3>1. Cherchez</h3>
+        <p>Filtrez par ville, capacité, type d'espace et budget pour trouver le lieu idéal.</p>
       </div>
-      <div class="tab-content active" id="tab-particulier">
-        <div class="steps">
-          <div class="step">
-            <div class="step-num">01</div>
-            <h3>Décrivez votre événement</h3>
-            <p>Type d'événement, nombre d'invités, dates souhaitées, localisation et budget.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <h3>Parcourez les espaces</h3>
-            <p>Filtrez par capacité, style, équipements et disponibilité en temps réel.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <h3>Réservez en ligne</h3>
-            <p>Signez le contrat numérique, payez en ligne et recevez votre confirmation.</p>
-          </div>
-        </div>
+      <div class="how-card">
+        <div class="how-icon">📅</div>
+        <h3>2. Réservez</h3>
+        <p>Choisissez vos dates, envoyez une demande et obtenez une confirmation rapide.</p>
       </div>
-      <div class="tab-content" id="tab-annonceur">
-        <div class="steps">
-          <div class="step">
-            <div class="step-num">01</div>
-            <h3>Créez votre fiche</h3>
-            <p>Photos, description, équipements, capacité, tarifs et disponibilités.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">02</div>
-            <h3>Recevez des demandes</h3>
-            <p>Les particuliers vous contactent directement. Acceptez ou refusez en 1 clic.</p>
-          </div>
-          <div class="step">
-            <div class="step-num">03</div>
-            <h3>Encaissez & gérez</h3>
-            <p>Paiement sécurisé, calendrier intégré et tableau de bord complet.</p>
-          </div>
-        </div>
+      <div class="how-card">
+        <div class="how-icon">🎉</div>
+        <h3>3. Profitez</h3>
+        <p>Vivez votre événement en toute sérénité, couvert par nos garanties.</p>
       </div>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FEATURES -->
-<section class="section section-dark" id="features">
-  <div class="container">
-    <div class="section-header">
-      <span class="badge-section light">Tout ce qu'il vous faut</span>
-      <h2>Des fonctionnalités pensées pour vous</h2>
-    </div>
-    <div class="features-grid">
-      <div class="feature-card">
-        <div class="feature-icon">🔒</div>
-        <h3>Paiement sécurisé</h3>
-        <p>Transactions chiffrées, dépôt de garantie géré automatiquement.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📄</div>
-        <h3>Contrat numérique</h3>
-        <p>Signature électronique conforme eIDAS, contrat généré automatiquement.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">📅</div>
-        <h3>Calendrier intégré</h3>
-        <p>Disponibilités en temps réel, synchronisation iCal/Google Calendar.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">💬</div>
-        <h3>Messagerie interne</h3>
-        <p>Échangez directement avec les annonceurs avant de réserver.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">⭐</div>
-        <h3>Avis certifiés</h3>
-        <p>Uniquement les utilisateurs ayant effectivement réservé peuvent noter.</p>
-      </div>
-      <div class="feature-card">
-        <div class="feature-icon">🛡️</div>
-        <h3>Assurance événement</h3>
-        <p>Partenariat avec des assureurs pour couvrir chaque événement.</p>
-      </div>
-    </div>
-  </div>
-</section>
+  <!-- FEATURED VENUES -->
+  <section class="featured">
+    <h2>Lieux à la une</h2>
+    <div class="venues-grid" id="featuredVenues"></div>
+    <a href="search.html" class="btn btn-outline">Voir tous les lieux</a>
+  </section>
 
-<!-- CTA FINAL -->
-<section class="section cta-section">
-  <div class="container">
-    <div class="cta-box">
-      <h2>Prêt à commencer ?</h2>
-      <p>Rejoignez des milliers d'utilisateurs qui font confiance à EventSpace.</p>
-      <div class="cta-btns">
-        <a href="register.html?type=particulier" class="btn btn-primary btn-lg">Je cherche un espace</a>
-        <a href="register.html?type=annonceur" class="btn btn-outline-light btn-lg">Je suis annonceur</a>
-      </div>
+  <!-- CTA ANNONCEUR -->
+  <section class="cta-annonceur">
+    <div class="cta-inner">
+      <h2>Vous avez un lieu à louer ?</h2>
+      <p>Rejoignez EventSpace et mettez votre espace en avant auprès de milliers de particuliers.</p>
+      <a href="register.html?role=annonceur" class="btn btn-white">Devenir annonceur</a>
     </div>
-  </div>
-</section>
+  </section>
 
-<!-- FOOTER -->
-<footer class="footer">
-  <div class="container">
-    <div class="footer-grid">
+  <!-- FOOTER -->
+  <footer>
+    <div class="footer-inner">
       <div class="footer-brand">
-        <a href="index.html" class="nav-logo">Event<span>Space</span></a>
-        <p>La plateforme qui connecte les organisateurs d'événements aux meilleurs espaces.</p>
+        <a class="logo" href="index.html">Event<span>Space</span></a>
+        <p>La plateforme de mise en relation entre propriétaires de lieux et organisateurs d'événements.</p>
       </div>
-      <div class="footer-links">
+      <div class="footer-col">
         <h4>Plateforme</h4>
-        <a href="search.html">Rechercher un espace</a>
-        <a href="register.html?type=annonceur">Proposer mon lieu</a>
-        <a href="login.html">Se connecter</a>
+        <a href="search.html">Chercher un lieu</a>
+        <a href="register.html?role=annonceur">Proposer mon lieu</a>
+        <a href="#how">Comment ça marche</a>
       </div>
-      <div class="footer-links">
+      <div class="footer-col">
         <h4>Légal</h4>
-        <a href="legal.html#cgu">CGU</a>
-        <a href="legal.html#cgv">CGV</a>
-        <a href="legal.html#privacy">Politique de confidentialité</a>
-        <a href="legal.html#cookies">Gestion des cookies</a>
-        <a href="legal.html#mentions">Mentions légales</a>
+        <a href="legal/cgu.html">CGU</a>
+        <a href="legal/cgv.html">CGV</a>
+        <a href="legal/privacy.html">Politique de confidentialité</a>
+        <a href="legal/mentions.html">Mentions légales</a>
+        <a href="legal/cookies.html">Gestion des cookies</a>
       </div>
-      <div class="footer-links">
+      <div class="footer-col">
         <h4>Support</h4>
+        <a href="mailto:contact@eventspace.fr">contact@eventspace.fr</a>
+        <a href="#">FAQ</a>
         <a href="#">Centre d'aide</a>
-        <a href="#">Nous contacter</a>
-        <a href="legal.html#litige">Résolution des litiges</a>
       </div>
     </div>
     <div class="footer-bottom">
-      <p>© 2026 EventSpace SAS. Tous droits réservés. — SIRET 123 456 789 00012</p>
-      <p>Hébergé en France 🇫🇷 — Données protégées RGPD</p>
+      <p>&copy; 2026 EventSpace SAS – Tous droits réservés – RCS Paris 123 456 789</p>
     </div>
-  </div>
-</footer>
+  </footer>
 
-<script src="app.js"></script>
+  <script src="js/data.js"></script>
+  <script src="js/app.js"></script>
 </body>
 </html>
