@@ -5,84 +5,254 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EventSpace – Détail du lieu</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,400;12..96,700;12..96,800&display=swap" rel="stylesheet" />
+  <style>
+    :root { --primary: #2d5be3; --dark: #12151f; --mid: #64748b; --border: #e2e8f0; --light: #f0f4ff; --radius: 12px; --shadow: 0 4px 16px rgba(0,0,0,.08); --font-display: 'Bricolage Grotesque',sans-serif; --font-body: 'Inter',sans-serif; }
+    * { box-sizing: border-box; margin: 0; padding: 0; }
+    body { font-family: var(--font-body); color: var(--dark); background: #fafafa; }
+    .venue-page { max-width: 1100px; margin: 90px auto 60px; padding: 0 20px; }
+    .venue-gallery { margin-bottom: 28px; }
+    .venue-body { display: grid; grid-template-columns: 1fr 360px; gap: 36px; }
+    .venue-header { display: flex; justify-content: space-between; align-items: flex-start; flex-wrap: wrap; gap: 12px; margin-bottom: 14px; }
+    .venue-header h1 { font-family: var(--font-display); font-size: clamp(1.5rem,3vw,2rem); font-weight: 800; }
+    .fav-btn { background: none; border: 1.5px solid var(--border); border-radius: 8px; padding: 8px 16px; cursor: pointer; font-size: .9rem; transition: all .2s; }
+    .fav-btn:hover { border-color: #e11d48; color: #e11d48; }
+    .venue-meta { display: flex; flex-wrap: wrap; gap: 14px; font-size: .9rem; color: var(--mid); margin-bottom: 18px; padding-bottom: 18px; border-bottom: 1px solid var(--border); }
+    .venue-type-badge { background: var(--light); color: var(--primary); padding: 3px 12px; border-radius: 100px; font-size: .8rem; font-weight: 600; }
+    .venue-desc p { font-size: .97rem; line-height: 1.8; color: #444; margin-bottom: 24px; }
+    .amenities-grid { display: flex; flex-wrap: wrap; gap: 10px; }
+    .amenity-item { background: #f8fafc; border: 1px solid var(--border); border-radius: 8px; padding: 7px 14px; font-size: .85rem; color: #334155; }
+    .venue-reviews { margin-top: 32px; padding-top: 28px; border-top: 1px solid var(--border); }
+    .venue-reviews h3 { font-size: 1.1rem; font-weight: 700; margin-bottom: 16px; }
+    .review-item { background: #fff; border: 1px solid var(--border); border-radius: 10px; padding: 16px 18px; margin-bottom: 12px; }
+    .review-header { display: flex; align-items: center; gap: 10px; margin-bottom: 8px; }
+    .review-avatar { width: 36px; height: 36px; border-radius: 50%; background: var(--primary); color: #fff; font-weight: 700; display: flex; align-items: center; justify-content: center; flex-shrink: 0; }
+    .review-date { margin-left: auto; font-size: .75rem; color: #999; }
+    .review-text { font-size: .9rem; color: #555; line-height: 1.6; }
+    .review-form-wrap { background: var(--light); border-radius: 10px; padding: 18px; margin-top: 16px; }
+    .review-form-wrap h4 { margin-bottom: 10px; }
+    .star-picker { display: flex; gap: 4px; margin-bottom: 6px; }
+    .star-pick { background: none; border: none; font-size: 1.6rem; cursor: pointer; color: #ccc; transition: color .15s; }
+    .star-pick.active { color: #f59e0b; }
+    /* BOOKING CARD */
+    .venue-booking { position: sticky; top: 100px; height: fit-content; }
+    .booking-card { background: #fff; border: 1.5px solid var(--border); border-radius: var(--radius); padding: 24px; box-shadow: var(--shadow); }
+    .booking-price { font-size: 1.4rem; font-weight: 700; color: var(--primary); margin-bottom: 18px; }
+    .booking-card label { display: block; font-size: .82rem; font-weight: 600; color: var(--mid); margin-bottom: 14px; }
+    .booking-card input, .booking-card select, .booking-card textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: .9rem; margin-top: 4px; outline: none; transition: border-color .2s; background: #fafafa; }
+    .booking-card input:focus, .booking-card select:focus, .booking-card textarea:focus { border-color: var(--primary); background: #fff; }
+    .total-breakdown { background: #f8fafc; border-radius: 8px; padding: 12px 14px; margin-bottom: 14px; }
+    .total-row { display: flex; justify-content: space-between; font-size: .87rem; color: var(--mid); margin-bottom: 6px; }
+    .total-final { font-size: .97rem; color: var(--dark); font-weight: 700; padding-top: 8px; border-top: 1px solid var(--border); margin-top: 4px; }
+    .booking-notice { font-size: .78rem; color: var(--mid); text-align: center; margin: 10px 0 6px; }
+    .legal-note { font-size: .74rem; color: #aaa; text-align: center; margin-top: 6px; }
+    .legal-note a { color: var(--primary); }
+    .btn { display: inline-flex; align-items: center; justify-content: center; padding: .65rem 1.4rem; border-radius: 8px; font-family: var(--font-body); font-weight: 600; font-size: .9rem; cursor: pointer; text-decoration: none; transition: all .2s; border: none; }
+    .btn-primary { background: var(--primary); color: #fff; }
+    .btn-primary:hover { background: #1e4bd1; }
+    .btn-ghost { background: transparent; color: var(--dark); border: 1.5px solid var(--border); }
+    .btn-ghost:hover { border-color: var(--primary); color: var(--primary); }
+    .full { width: 100%; }
+    /* CHAT BTN */
+    .chat-open-btn { width: 100%; margin-top: 10px; background: #10b981; color: #fff; border: none; border-radius: 8px; padding: .65rem; font-family: var(--font-body); font-weight: 600; font-size: .9rem; cursor: pointer; transition: background .2s; }
+    .chat-open-btn:hover { background: #059669; }
+    /* CHAT WIDGET */
+    #chatWidget { display: none; position: fixed; bottom: 24px; right: 24px; width: 340px; height: 480px; background: #fff; border-radius: 16px; box-shadow: 0 8px 40px rgba(0,0,0,.18); flex-direction: column; z-index: 9999; overflow: hidden; }
+    .chat-header { background: var(--primary); color: #fff; padding: 14px 16px; display: flex; justify-content: space-between; align-items: center; }
+    .chat-header h4 { font-size: .92rem; font-weight: 600; }
+    .chat-header span { font-size: .75rem; opacity: .8; }
+    .chat-close { background: none; border: none; color: #fff; font-size: 1.2rem; cursor: pointer; opacity: .8; padding: 0; }
+    .chat-close:hover { opacity: 1; }
+    #chatMessages { flex: 1; overflow-y: auto; padding: 14px; display: flex; flex-direction: column; gap: 8px; background: #f8fafc; }
+    .chat-msg { display: flex; flex-direction: column; max-width: 80%; }
+    .chat-msg.mine { align-self: flex-end; align-items: flex-end; }
+    .chat-msg.theirs { align-self: flex-start; align-items: flex-start; }
+    .chat-bubble { padding: 9px 13px; border-radius: 12px; font-size: .87rem; line-height: 1.5; }
+    .chat-msg.mine .chat-bubble { background: var(--primary); color: #fff; border-bottom-right-radius: 4px; }
+    .chat-msg.theirs .chat-bubble { background: #fff; border: 1px solid #e2e8f0; color: #334155; border-bottom-left-radius: 4px; }
+    .chat-time { font-size: .7rem; color: #94a3b8; margin-top: 3px; }
+    .chat-system { background: #e0f2fe; color: #0369a1; border-radius: 8px; padding: 8px 12px; font-size: .8rem; text-align: center; }
+    .chat-footer { padding: 10px; border-top: 1px solid var(--border); background: #fff; }
+    .chat-form { display: flex; gap: 8px; }
+    .chat-form input { flex: 1; padding: 9px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: .88rem; outline: none; }
+    .chat-form input:focus { border-color: var(--primary); }
+    .chat-form button { background: var(--primary); color: #fff; border: none; border-radius: 8px; padding: 9px 14px; cursor: pointer; font-size: .88rem; font-weight: 600; }
+    /* MODALS */
+    .modal-overlay { position: fixed; inset: 0; background: rgba(0,0,0,.5); display: flex; align-items: center; justify-content: center; z-index: 10000; padding: 20px; }
+    .modal { background: #fff; border-radius: 16px; padding: 36px 32px; max-width: 480px; width: 100%; position: relative; }
+    .modal-sm { max-width: 400px; text-align: center; }
+    .modal-icon { font-size: 3rem; margin-bottom: 14px; }
+    .modal h3 { font-family: var(--font-display); font-size: 1.3rem; font-weight: 700; margin-bottom: 10px; }
+    .modal p { color: var(--mid); font-size: .93rem; margin-bottom: 22px; }
+    .modal-close { position: absolute; top: 14px; right: 16px; background: none; border: none; font-size: 1.3rem; cursor: pointer; color: #aaa; }
+    .pay-field { margin-bottom: 14px; }
+    .pay-field label { display: block; font-size: .8rem; font-weight: 600; color: var(--mid); margin-bottom: 5px; }
+    .pay-field input { width: 100%; padding: 11px 13px; border: 1.5px solid var(--border); border-radius: 8px; font-family: var(--font-body); font-size: .92rem; outline: none; }
+    .pay-field input:focus { border-color: var(--primary); }
+    .pay-row { display: flex; gap: 12px; }
+    .pay-row .pay-field { flex: 1; }
+    .pay-total-line { background: var(--light); border-radius: 8px; padding: 12px 16px; margin: 16px 0; display: flex; justify-content: space-between; align-items: center; }
+    .pay-total-line span { font-size: .88rem; color: var(--mid); }
+    .pay-total-line strong { font-size: 1.15rem; color: var(--primary); }
+    .pay-secure { font-size: .75rem; color: #aaa; text-align: center; margin-top: 10px; }
+    /* NAV */
+    nav { position: fixed; top: 0; left: 0; right: 0; z-index: 999; background: rgba(255,255,255,.97); backdrop-filter: blur(8px); border-bottom: 1px solid var(--border); height: 64px; display: flex; align-items: center; }
+    .nav-inner { max-width: 1100px; margin: 0 auto; padding: 0 20px; width: 100%; display: flex; align-items: center; justify-content: space-between; gap: 20px; }
+    .logo { font-family: var(--font-display); font-weight: 800; font-size: 1.1rem; color: var(--dark); text-decoration: none; }
+    .logo span { color: var(--primary); }
+    .nav-back { font-size: .9rem; color: var(--mid); text-decoration: none; }
+    .nav-back:hover { color: var(--primary); }
+    /* FOOTER */
+    .footer-mini { text-align: center; padding: 24px; font-size: .8rem; color: #aaa; border-top: 1px solid var(--border); margin-top: 40px; }
+    /* RESPONSIVE */
+    @media (max-width: 768px) {
+      .venue-body { grid-template-columns: 1fr; }
+      .venue-booking { position: static; }
+      #chatWidget { width: calc(100vw - 32px); right: 16px; }
+    }
+  </style>
 </head>
 <body>
-  <nav id="navbar">
-    <div class="nav-inner">
-      <a class="logo" href="index.html">Event<span>Space</span></a>
-      <div class="nav-links">
-        <a href="search.html">← Retour aux résultats</a>
-      </div>
-      <div class="nav-actions">
-        <a href="login.html" class="btn btn-ghost" id="navLoginBtn">Connexion</a>
-        <button class="burger" id="burger">&#9776;</button>
-      </div>
-    </div>
-  </nav>
 
-  <div class="venue-page" id="venuePage">
-    <div class="venue-gallery" id="venueGallery"></div>
-    <div class="venue-body">
-      <div class="venue-main">
-        <div class="venue-header">
-          <h1 id="venueTitle"></h1>
-          <button class="fav-btn" id="favBtn" onclick="toggleFav()">♡ Favoris</button>
-        </div>
-        <div class="venue-meta" id="venueMeta"></div>
-        <div class="venue-desc" id="venueDesc"></div>
-        <div class="venue-amenities" id="venueAmenities"></div>
-        <div class="venue-reviews">
-          <h3>Avis clients</h3>
-          <div id="venueReviews"></div>
-        </div>
-      </div>
-      <aside class="venue-booking">
-        <div class="booking-card">
-          <p class="booking-price" id="bookingPrice"></p>
-          <form id="bookingForm" onsubmit="submitBooking(event)">
-            <label>Date de l'événement <input type="date" id="bookDate" required /></label>
-            <label>Heure de début <input type="time" id="bookStart" required /></label>
-            <label>Heure de fin <input type="time" id="bookEnd" required /></label>
-            <label>Nombre d'invités <input type="number" id="bookGuests" min="1" required /></label>
-            <label>Type d'événement
-              <select id="bookType">
-                <option>Anniversaire</option>
-                <option>Mariage</option>
-                <option>Séminaire</option>
-                <option>Soirée privée</option>
-                <option>Shooting photo</option>
-                <option>Autre</option>
-              </select>
-            </label>
-            <label>Message (facultatif)
-              <textarea id="bookMsg" rows="3" placeholder="Précisions sur votre événement…"></textarea>
-            </label>
-            <div class="booking-total" id="bookingTotal"></div>
-            <button type="submit" class="btn btn-primary full">Envoyer la demande</button>
-          </form>
-          <p class="booking-notice">Aucun débit immédiat. L'annonceur a 48h pour confirmer.</p>
-          <hr/>
-          <p class="legal-note">En soumettant ce formulaire, vous acceptez les <a href="legal/cgv.html">CGV</a> et la politique d'annulation.</p>
-        </div>
-      </aside>
+<nav id="navbar">
+  <div class="nav-inner">
+    <a class="logo" href="index.html">Event<span>Space</span></a>
+    <a class="nav-back" href="search.html">← Retour aux résultats</a>
+    <div class="nav-actions">
+      <a href="login.html" class="btn btn-ghost" id="navLoginBtn">Connexion</a>
     </div>
   </div>
+</nav>
 
-  <div class="modal-overlay" id="bookingSuccess" style="display:none">
-    <div class="modal modal-sm">
-      <div class="modal-icon">✅</div>
-      <h3>Demande envoyée !</h3>
-      <p>L'annonceur a été notifié. Vous recevrez une confirmation dans votre espace.</p>
-      <a href="dashboard-particulier.html" class="btn btn-primary">Voir mes réservations</a>
+<div class="venue-page" id="venuePage">
+  <div class="venue-gallery" id="venueGallery"></div>
+  <div class="venue-body">
+    <div class="venue-main">
+      <div class="venue-header">
+        <h1 id="venueTitle"></h1>
+        <button class="fav-btn" id="favBtn" onclick="toggleFav()">♡ Favoris</button>
+      </div>
+      <div class="venue-meta" id="venueMeta"></div>
+      <div class="venue-desc" id="venueDesc"></div>
+      <div class="venue-amenities" id="venueAmenities"></div>
+      <div class="venue-reviews">
+        <h3>Avis clients</h3>
+        <div id="venueReviews"></div>
+      </div>
     </div>
+
+    <aside class="venue-booking">
+      <div class="booking-card">
+        <p class="booking-price" id="bookingPrice"></p>
+        <form id="bookingForm" onsubmit="submitBooking(event)">
+          <label>Date de l'événement
+            <input type="date" id="bookDate" required />
+          </label>
+          <label>Heure de début
+            <input type="time" id="bookStart" required />
+          </label>
+          <label>Heure de fin
+            <input type="time" id="bookEnd" required />
+          </label>
+          <label>Nombre d'invités
+            <input type="number" id="bookGuests" min="1" required placeholder="Ex: 40" />
+          </label>
+          <label>Type d'événement
+            <select id="bookType">
+              <option>Anniversaire</option>
+              <option>Mariage</option>
+              <option>Séminaire</option>
+              <option>Soirée privée</option>
+              <option>Shooting photo</option>
+              <option>Autre</option>
+            </select>
+          </label>
+          <label>Message (facultatif)
+            <textarea id="bookMsg" rows="3" placeholder="Précisions sur votre événement…"></textarea>
+          </label>
+          <div class="booking-total" id="bookingTotal"></div>
+          <button type="submit" class="btn btn-primary full">Réserver ce lieu</button>
+        </form>
+        <p class="booking-notice">Aucun débit avant confirmation. L'annonceur a 48h pour valider.</p>
+        <hr style="margin:14px 0;border:none;border-top:1px solid var(--border)" />
+        <button class="chat-open-btn" id="chatBtn" onclick="openChat()">💬 Contacter l'annonceur</button>
+        <p class="legal-note" style="margin-top:12px">En réservant, vous acceptez les <a href="#">CGV</a> d'EventSpace.</p>
+      </div>
+    </aside>
   </div>
+</div>
 
-  <footer class="footer-mini">
-    <p>&copy; 2026 EventSpace – <a href="legal/cgu.html">CGU</a> – <a href="legal/privacy.html">Confidentialité</a></p>
-  </footer>
+<!-- CHAT WIDGET -->
+<div id="chatWidget">
+  <div class="chat-header">
+    <div>
+      <h4 id="chatVenueName">Chat</h4>
+      <span>🟢 Répond habituellement sous 1h</span>
+    </div>
+    <button class="chat-close" onclick="closeChat()">✕</button>
+  </div>
+  <div id="chatMessages"></div>
+  <div class="chat-footer">
+    <form class="chat-form" onsubmit="sendMessage(event)">
+      <input type="text" id="chatInput" placeholder="Votre message…" autocomplete="off" />
+      <button type="submit">Envoyer</button>
+    </form>
+  </div>
+</div>
 
-  <script src="js/data.js"></script>
-  <script src="js/venue.js"></script>
+<!-- PAYMENT MODAL -->
+<div class="modal-overlay" id="paymentModal" style="display:none">
+  <div class="modal">
+    <button class="modal-close" onclick="closePayment()">✕</button>
+    <h3>💳 Paiement sécurisé</h3>
+    <p>Votre carte ne sera débitée qu'après confirmation de l'annonceur.</p>
+    <form id="payForm">
+      <div class="pay-field">
+        <label>Numéro de carte</label>
+        <input type="text" placeholder="1234 5678 9012 3456" maxlength="19" required
+          oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(.{4})/g,'$1 ').trim()" />
+      </div>
+      <div class="pay-row">
+        <div class="pay-field">
+          <label>Date d'expiration</label>
+          <input type="text" placeholder="MM/AA" maxlength="5" required
+            oninput="this.value=this.value.replace(/[^0-9]/g,'').replace(/(\d{2})(\d)/,'$1/$2')" />
+        </div>
+        <div class="pay-field">
+          <label>CVC</label>
+          <input type="text" placeholder="123" maxlength="3" required oninput="this.value=this.value.replace(/[^0-9]/g,'')" />
+        </div>
+      </div>
+      <div class="pay-field">
+        <label>Nom sur la carte</label>
+        <input type="text" placeholder="SOPHIE MARTIN" required style="text-transform:uppercase" />
+      </div>
+      <div class="pay-total-line">
+        <span>Montant à réserver :</span>
+        <strong id="payTotal">0 €</strong>
+      </div>
+      <button type="submit" class="btn btn-primary full">✅ Confirmer la réservation</button>
+    </form>
+    <p class="pay-secure">🔒 Paiement sécurisé SSL · Données protégées · Remboursement garanti</p>
+  </div>
+</div>
+
+<!-- BOOKING SUCCESS -->
+<div class="modal-overlay" id="bookingSuccess" style="display:none">
+  <div class="modal modal-sm">
+    <div class="modal-icon">🎉</div>
+    <h3>Demande envoyée !</h3>
+    <p>L'annonceur a été notifié et va traiter votre demande dans les 24h. Vous pouvez suivre son état dans votre espace.</p>
+    <a href="dashboard-particulier.html" class="btn btn-primary full">Voir mes réservations</a>
+  </div>
+</div>
+
+<footer class="footer-mini">
+  <p>© 2026 EventSpace – <a href="#">CGU</a> – <a href="#">Confidentialité</a></p>
+</footer>
+
+<script src="js/data.js"></script>
+<script src="js/store.js"></script>
+<script src="js/venue.js"></script>
 </body>
 </html>

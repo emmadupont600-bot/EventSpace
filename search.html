@@ -5,7 +5,13 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EventSpace – Rechercher un lieu</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet" />
+  <style>
+    .venue-fav-btn { position: absolute; top: 10px; right: 10px; background: rgba(255,255,255,.9); border: none; border-radius: 50%; width: 32px; height: 32px; font-size: 1rem; cursor: pointer; color: #ccc; transition: color .2s; }
+    .venue-fav-btn.active, .venue-fav-btn:hover { color: #e11d48; }
+    .empty-state { text-align: center; padding: 60px 20px; color: #888; }
+    .empty-state h3 { margin-bottom: 8px; }
+  </style>
 </head>
 <body>
   <nav id="navbar">
@@ -24,26 +30,24 @@
   </nav>
 
   <div class="search-page">
-    <!-- FILTERS -->
     <aside class="filters" id="filtersPanel">
       <h3>Filtres</h3>
       <button class="filters-close" id="filtersClose">✕</button>
       <label>Ville / Code postal
-        <input type="text" id="fCity" placeholder="Paris, Lyon…" />
+        <input type="text" id="fCity" placeholder="Paris, Lyon, Beauvais…" />
       </label>
-      <label>Type d'événement
+      <label>Type d'espace
         <select id="fType">
-          <option value="">Tous</option>
-          <option>Anniversaire</option>
-          <option>Mariage</option>
-          <option>Séminaire</option>
-          <option>Soirée privée</option>
-          <option>Shooting photo</option>
-          <option>Autre</option>
+          <option value="">Tous les types</option>
+          <option value="salle">Salle de réception</option>
+          <option value="rooftop">Rooftop</option>
+          <option value="loft">Loft / Studio</option>
+          <option value="jardin">Jardin / Extérieur</option>
+          <option value="chateau">Château / Manoir</option>
         </select>
       </label>
-      <label>Capacité min.
-        <input type="number" id="fCap" placeholder="20" min="1" />
+      <label>Capacité minimale
+        <input type="number" id="fCap" placeholder="Ex: 20" min="1" />
       </label>
       <label>Budget max. (€/h)
         <input type="range" id="fBudget" min="10" max="1000" value="1000" step="10" />
@@ -51,16 +55,15 @@
       </label>
       <label>Note minimale
         <select id="fRating">
-          <option value="0">Toutes</option>
+          <option value="0">Toutes les notes</option>
           <option value="4">4+ ⭐</option>
           <option value="4.5">4.5+ ⭐</option>
         </select>
       </label>
-      <button class="btn btn-primary" onclick="applyFilters()">Appliquer</button>
-      <button class="btn btn-ghost" onclick="resetFilters()">Réinitialiser</button>
+      <button class="btn btn-primary" onclick="applyFilters()">Appliquer les filtres</button>
+      <button class="btn btn-ghost" style="margin-top:8px" onclick="resetFilters()">Réinitialiser</button>
     </aside>
 
-    <!-- RESULTS -->
     <main class="results">
       <div class="results-header">
         <h2>Lieux disponibles <span id="resultCount"></span></h2>
@@ -75,11 +78,12 @@
     </main>
   </div>
 
-  <footer class="footer-mini">
-    <p>&copy; 2026 EventSpace – <a href="legal/cgu.html">CGU</a> – <a href="legal/privacy.html">Confidentialité</a></p>
+  <footer style="text-align:center;padding:20px;font-size:.8rem;color:#aaa;border-top:1px solid #e2e8f0;margin-top:40px">
+    © 2026 EventSpace
   </footer>
 
   <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
   <script src="js/search.js"></script>
 </body>
 </html>

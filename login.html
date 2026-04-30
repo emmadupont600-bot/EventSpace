@@ -5,7 +5,7 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <title>EventSpace – Connexion</title>
   <link rel="stylesheet" href="css/style.css" />
-  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Bricolage+Grotesque:opsz,wght@12..96,700;12..96,800&display=swap" rel="stylesheet" />
 </head>
 <body class="auth-page">
   <div class="auth-container">
@@ -24,11 +24,11 @@
 
     <form id="loginForm" onsubmit="handleLogin(event)">
       <label>Email
-        <input type="email" id="loginEmail" required placeholder="vous@exemple.fr" />
+        <input type="email" id="loginEmail" required placeholder="vous@exemple.fr" autocomplete="email" />
       </label>
       <label>Mot de passe
         <div class="pass-wrap">
-          <input type="password" id="loginPass" required placeholder="••••••••" />
+          <input type="password" id="loginPass" required placeholder="••••••••" autocomplete="current-password" />
           <button type="button" class="eye-btn" onclick="togglePass('loginPass')">👁</button>
         </div>
       </label>
@@ -39,14 +39,15 @@
       <button type="submit" class="btn btn-primary full">Se connecter</button>
       <p id="loginError" class="form-error"></p>
     </form>
-    <p class="auth-switch">Pas encore de compte ? <a href="register.html">S'inscrire</a></p>
+    <p class="auth-switch">Pas encore de compte ? <a href="register.html">S'inscrire gratuitement</a></p>
 
     <div class="legal-note">
-      En vous connectant, vous acceptez nos <a href="legal/cgu.html">CGU</a> et notre <a href="legal/privacy.html">politique de confidentialité</a>.
+      En vous connectant, vous acceptez nos <a href="#">CGU</a> et notre <a href="#">politique de confidentialité</a>.
     </div>
   </div>
 
   <script src="js/data.js"></script>
+  <script src="js/store.js"></script>
   <script src="js/auth.js"></script>
 </body>
 </html>

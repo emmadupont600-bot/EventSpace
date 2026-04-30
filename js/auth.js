@@ -2,11 +2,10 @@
 let currentTab = 'particulier';
 
 document.addEventListener('DOMContentLoaded', () => {
-  // Pre-fill role from URL
   const urlRole = new URLSearchParams(location.search).get('role');
   if (urlRole === 'annonceur') {
-    switchTab && switchTab('annonceur');
-    switchRegTab && switchRegTab('annonceur');
+    if (typeof switchTab === 'function') switchTab('annonceur');
+    if (typeof switchRegTab === 'function') switchRegTab('annonceur');
   }
 });
 
@@ -35,26 +34,40 @@ function handleLogin(e) {
   const pass = document.getElementById('loginPass').value;
   const remember = document.getElementById('rememberMe').checked;
   const errEl = document.getElementById('loginError');
-
-  const user = DEMO_USERS.find(u => u.email === email && u.password === pass && u.role === currentTab);
+  const users = Store.getUsers();
+  const user = users.find(u => u.email === email && u.password === pass && u.role === currentTab);
   if (!user) {
     errEl.textContent = 'Email ou mot de passe incorrect pour ce type de compte.';
     return;
   }
   errEl.textContent = '';
-  const store = remember ? localStorage : sessionStorage;
-  store.setItem('es_user', JSON.stringify(user));
+  Store.setCurrentUser(user, remember);
   location.href = user.role === 'annonceur' ? 'dashboard-annonceur.html' : 'dashboard-particulier.html';
 }
 
 function handleRegister(e) {
   e.preventDefault();
   const errEl = document.getElementById('registerError');
+  const firstName = document.getElementById('regFirstName').value.trim();
+  const lastName = document.getElementById('regLastName').value.trim();
+  const email = document.getElementById('regEmail').value.trim().toLowerCase();
   const pass = document.getElementById('regPass').value;
-  if (pass.length < 8) { errEl.textContent = 'Le mot de passe doit contenir au moins 8 caractères.'; return; }
+  const role = currentTab;
+  if (pass.length < 8) { errEl.textContent = 'Mot de passe trop court (8 caractères min).'; return; }
+  const users = Store.getUsers();
+  if (users.find(u => u.email === email)) { errEl.textContent = 'Cet email est déjà utilisé.'; return; }
+  const newUser = { id: Date.now(), role, email, password: pass, firstName, lastName, phone: '' };
+  if (role === 'annonceur') {
+    const vnEl = document.getElementById('regVenueName');
+    const siEl = document.getElementById('regSiret');
+    newUser.venueName = vnEl ? vnEl.value.trim() : '';
+    newUser.siret = siEl ? siEl.value.trim() : '';
+  }
+  users.push(newUser);
+  Store.saveUsers(users);
+  Store.setCurrentUser(newUser, false);
   errEl.textContent = '';
-  alert('Compte créé avec succès ! (démonstration — aucune donnée persistée) \nVous pouvez vous connecter avec les comptes de démo.');
-  location.href = 'login.html';
+  location.href = role === 'annonceur' ? 'dashboard-annonceur.html' : 'dashboard-particulier.html';
 }
 
 function togglePass(id) {
@@ -63,7 +76,6 @@ function togglePass(id) {
 }
 
 function logout() {
-  sessionStorage.removeItem('es_user');
-  localStorage.removeItem('es_user');
+  Store.logout();
   location.href = 'index.html';
 }
