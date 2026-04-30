@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Connexion — EventSpace</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">Event<span>Space</span></a>
+  </div>
+</nav>
+
+<div class="form-page">
+  <div class="form-card">
+    <h1>Bon retour 👋</h1>
+    <p class="form-sub">Connectez-vous à votre compte EventSpace</p>
+
+    <div class="demo-creds">
+      <h4>🔑 Comptes de démo</h4>
+      <div class="cred">Particulier &mdash; <span>particulier@demo.fr</span> / <span>Demo1234!</span></div>
+      <div class="cred">Annonceur &mdash; <span>annonceur@demo.fr</span> / <span>Demo1234!</span></div>
+    </div>
+
+    <div id="loginAlert"></div>
+
+    <form id="loginForm" novalidate>
+      <div class="form-group">
+        <label for="email">Adresse e-mail</label>
+        <input type="email" id="email" placeholder="vous@exemple.fr" autocomplete="email" required>
+      </div>
+      <div class="form-group">
+        <label for="password">Mot de passe</label>
+        <input type="password" id="password" placeholder="••••••••" autocomplete="current-password" required>
+      </div>
+      <div style="text-align:right;margin-bottom:20px;">
+        <a href="#" style="font-size:0.82rem;color:var(--primary);">Mot de passe oublié ?</a>
+      </div>
+      <button type="submit" class="btn btn-primary btn-full">Se connecter</button>
+    </form>
+
+    <div class="form-divider"><span>ou</span></div>
+    <p class="form-footer">Pas encore de compte ? <a href="register.html">Créer un compte</a></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  document.getElementById('loginForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const email = document.getElementById('email').value.trim();
+    const pass = document.getElementById('password').value;
+    const alert = document.getElementById('loginAlert');
+    const result = EventSpace.login(email, pass);
+    if (result.success) {
+      alert.innerHTML = '<div class="alert alert-success">✔ Connexion réussie ! Redirection...</div>';
+      setTimeout(() => {
+        window.location.href = result.user.role === 'annonceur' ? 'dashboard-annonceur.html' : 'dashboard-particulier.html';
+      }, 800);
+    } else {
+      alert.innerHTML = '<div class="alert alert-error">' + result.message + '</div>';
+    }
+  });
+</script>
+</body>
+</html>

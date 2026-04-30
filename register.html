@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Créer un compte — EventSpace</title>
+  <link rel="stylesheet" href="styles.css">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+</head>
+<body>
+<nav class="navbar">
+  <div class="nav-container">
+    <a href="index.html" class="nav-logo">Event<span>Space</span></a>
+  </div>
+</nav>
+
+<div class="form-page">
+  <div class="form-card">
+    <h1>Créer un compte</h1>
+    <p class="form-sub">Rejoignez EventSpace gratuitement</p>
+
+    <div id="roleSelection">
+      <p style="font-size:0.85rem;color:var(--text-muted);margin-bottom:12px;">Je suis&nbsp;:</p>
+      <div class="role-selector">
+        <div class="role-card" id="roleParticulier" onclick="selectRole('particulier')">
+          <div class="role-icon">👤</div>
+          <h3>Particulier</h3>
+          <p>Je cherche un espace pour mon événement</p>
+        </div>
+        <div class="role-card" id="roleAnnonceur" onclick="selectRole('annonceur')">
+          <div class="role-icon">🏛️</div>
+          <h3>Annonceur</h3>
+          <p>Je propose mon lieu à la location</p>
+        </div>
+      </div>
+    </div>
+
+    <div id="registerAlert"></div>
+
+    <form id="registerForm" novalidate>
+      <div class="form-row">
+        <div class="form-group">
+          <label>Prénom</label>
+          <input type="text" id="firstName" placeholder="Marie" required>
+        </div>
+        <div class="form-group">
+          <label>Nom</label>
+          <input type="text" id="lastName" placeholder="Dupont" required>
+        </div>
+      </div>
+      <div class="form-group">
+        <label>Adresse e-mail</label>
+        <input type="email" id="regEmail" placeholder="marie@exemple.fr" required>
+      </div>
+      <div class="form-group">
+        <label>Téléphone</label>
+        <input type="tel" id="phone" placeholder="06 12 34 56 78">
+      </div>
+      <div class="form-group">
+        <label>Mot de passe</label>
+        <input type="password" id="regPassword" placeholder="8 caractères minimum" required>
+      </div>
+      <div class="form-group">
+        <label>Confirmer le mot de passe</label>
+        <input type="password" id="regPasswordConfirm" placeholder="••••••••" required>
+      </div>
+
+      <div id="annonceurFields" style="display:none;">
+        <div class="form-group">
+          <label>Nom de l'espace / lieu</label>
+          <input type="text" id="venueName" placeholder="Salle des Arts, Château Bellevue...">
+        </div>
+        <div class="form-group">
+          <label>Ville</label>
+          <input type="text" id="venueCity" placeholder="Paris, Lyon...">
+        </div>
+      </div>
+
+      <div class="form-group" style="margin-top:8px;">
+        <label style="display:flex;align-items:flex-start;gap:10px;cursor:pointer;">
+          <input type="checkbox" id="acceptCGU" style="margin-top:3px;accent-color:var(--primary);">
+          <span style="font-size:0.82rem;color:var(--text-muted);">J'accepte les <a href="legal.html#cgu" style="color:var(--primary);">CGU</a>, les <a href="legal.html#cgv" style="color:var(--primary);">CGV</a> et la <a href="legal.html#privacy" style="color:var(--primary);">politique de confidentialité</a> d'EventSpace.</span>
+        </label>
+      </div>
+
+      <button type="submit" class="btn btn-primary btn-full" style="margin-top:8px;">Créer mon compte</button>
+    </form>
+
+    <p class="form-footer">Déjà un compte ? <a href="login.html">Se connecter</a></p>
+  </div>
+</div>
+
+<script src="app.js"></script>
+<script>
+  // Pre-select role from URL param
+  const urlParams = new URLSearchParams(window.location.search);
+  const preRole = urlParams.get('type');
+  if (preRole) selectRole(preRole);
+
+  function selectRole(role) {
+    document.getElementById('roleParticulier').classList.toggle('selected', role === 'particulier');
+    document.getElementById('roleAnnonceur').classList.toggle('selected', role === 'annonceur');
+    document.getElementById('annonceurFields').style.display = role === 'annonceur' ? 'block' : 'none';
+    window._selectedRole = role;
+  }
+
+  document.getElementById('registerForm').addEventListener('submit', function(e) {
+    e.preventDefault();
+    const alertEl = document.getElementById('registerAlert');
+    const role = window._selectedRole;
+    if (!role) {
+      alertEl.innerHTML = '<div class="alert alert-error">Veuillez choisir votre type de compte.</div>';
+      return;
+    }
+    if (!document.getElementById('acceptCGU').checked) {
+      alertEl.innerHTML = '<div class="alert alert-error">Vous devez accepter les CGU pour continuer.</div>';
+      return;
+    }
+    const pwd = document.getElementById('regPassword').value;
+    const pwd2 = document.getElementById('regPasswordConfirm').value;
+    if (pwd !== pwd2) {
+      alertEl.innerHTML = '<div class="alert alert-error">Les mots de passe ne correspondent pas.</div>';
+      return;
+    }
+    if (pwd.length < 8) {
+      alertEl.innerHTML = '<div class="alert alert-error">Mot de passe trop court (minimum 8 caractères).</div>';
+      return;
+    }
+    const userData = {
+      firstName: document.getElementById('firstName').value,
+      lastName: document.getElementById('lastName').value,
+      email: document.getElementById('regEmail').value,
+      phone: document.getElementById('phone').value,
+      password: pwd,
+      role: role,
+      venueName: role === 'annonceur' ? document.getElementById('venueName').value : '',
+      venueCity: role === 'annonceur' ? document.getElementById('venueCity').value : ''
+    };
+    const result = EventSpace.register(userData);
+    if (result.success) {
+      alertEl.innerHTML = '<div class="alert alert-success">✔ Compte créé ! Redirection...</div>';
+      setTimeout(() => {
+        window.location.href = role === 'annonceur' ? 'dashboard-annonceur.html' : 'dashboard-particulier.html';
+      }, 900);
+    } else {
+      alertEl.innerHTML = '<div class="alert alert-error">' + result.message + '</div>';
+    }
+  });
+</script>
+</body>
+</html>
